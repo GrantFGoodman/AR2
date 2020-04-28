@@ -90,6 +90,7 @@ public class ActivityLogin extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task)
                         {
                             if (task.isSuccessful()) {
+                                Toast.makeText(ActivityLogin.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 startHome();
                             }
                             else {

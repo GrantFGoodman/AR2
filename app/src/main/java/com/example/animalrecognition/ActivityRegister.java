@@ -114,6 +114,7 @@ public class ActivityRegister extends AppCompatActivity
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user);
 
+                                Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                                 startHome();
                             }
                             else {

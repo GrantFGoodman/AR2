@@ -19,20 +19,8 @@ public class ActivityHome extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.fragment_home);
 
-        buttonSignOut = findViewById(R.id.signOut);
 
-        buttonSignOut.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                FirebaseAuth.getInstance().signOut();
-
-                Intent intMain = new Intent(ActivityHome.this, ActivityRegister.class);
-                startActivity(intMain);
-            }
-        });
     }
 }
