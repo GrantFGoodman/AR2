@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1046669596574",
+    "firebase_url": "https://animalrecognition-e31de.firebaseio.com",
+    "project_id": "animalrecognition-e31de",
+    "storage_bucket": "animalrecognition-e31de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046669596574:android:96390e7f0e5fdecd4d688f",
+        "android_client_info": {
+          "package_name": "com.example.animalrecognition"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1046669596574-7r09g6tsdkughaen68c809p9niv5ckbe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPIH2aO5zIA7xLKwTHNNixgq5vchKlZoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1046669596574-7r09g6tsdkughaen68c809p9niv5ckbe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
