@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">AnimalRecognition</string>
+    <string name="login_header">Login</string>
+    <string name="register_header">Register Account</string>
+    <string name="register_already_complete">Already made an account?</string>
+    <string name="register_not_complete">Don\'t have an account?</string>
+    <string name="input_userName">Username</string>
+    <string name="input_userId">Student ID</string>
+    <string name="input_userEmail">Email</string>
+    <string name="input_userPassword">Password</string>
+    <string name="register_button">Register</string>
+    <string name="login_button">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
 </resources>

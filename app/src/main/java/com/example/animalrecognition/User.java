@@ -2,15 +2,11 @@ package com.example.animalrecognition;
 
 public class User
 {
-    public String name, email, ID;
+    public String name, email, userId;
 
-    public User(){
-
-    }
-
-    public User(String name, String email, String ID) {
+    public User(String name, String email, String userId) {
         this.name = name;
         this.email = email;
-        this.ID = ID;
+        this.userId = userId;
     }
 }
