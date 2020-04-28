@@ -80,18 +80,24 @@ public class ActivityLogin extends AppCompatActivity {
                 email = entryEmail.getText().toString().trim();
                 password = entryPassword.getText().toString().trim();
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(ActivityLogin.this, "One of the required fields left blank.", Toast.LENGTH_SHORT).show();
+                if (email.isEmpty()) {
+                  entryEmail.setError("Please enter an email");
+                  entryEmail.requestFocus();
+                } else if (password.isEmpty())
+                {
+                    entryPassword.setError("Please enter a password");
+                    entryPassword.requestFocus();
                 } else {
+                    // Attempt to actually log the user in
                     auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(ActivityLogin.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task)
                         {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(ActivityLogin.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            if (task.isSuccessful()) {
+                                startHome();
                             }
                             else {
-                                startHome();
+                                Toast.makeText(ActivityLogin.this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
