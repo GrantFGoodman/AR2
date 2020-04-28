@@ -21,13 +21,10 @@ public class ActivityLogin extends AppCompatActivity {
 
     static FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
-
     private EditText entryEmail, entryPassword;
     private Button buttonLogin;
     private TextView textButtonRegister;
-
-    private String email;
-    private String password;
+    private String email, password;
 
     private void startHome()
     {
@@ -83,8 +80,7 @@ public class ActivityLogin extends AppCompatActivity {
                 if (email.isEmpty()) {
                   entryEmail.setError("Please enter an email");
                   entryEmail.requestFocus();
-                } else if (password.isEmpty())
-                {
+                } else if (password.isEmpty()) {
                     entryPassword.setError("Please enter a password");
                     entryPassword.requestFocus();
                 } else {

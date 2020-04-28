@@ -18,11 +18,27 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ActivityRegister extends AppCompatActivity
 {
-    EditText name_Text, ID_Text, email_Text, password_Text;
-    Button buttonSignUp;
-    TextView toSignIn;
+    private FirebaseAuth auth;
+    private EditText entryName, entryId, entryEmail, entryPassword;
+    private Button buttonSignup;
+    private TextView textButtonSignup;
+    private String name, email, id, password;
 
-    FirebaseAuth auth;
+    private void startHome()
+    {
+        Intent intHome = new Intent(ActivityRegister.this, ActivityHome.class);
+        startActivity(intHome);
+
+        finish();
+    }
+
+    private void startLogin()
+    {
+        Intent intLogin = new Intent(ActivityRegister.this, ActivityLogin.class);
+        startActivity(intLogin);
+
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,97 +47,66 @@ public class ActivityRegister extends AppCompatActivity
         setContentView(R.layout.activity_register);
 
         auth = FirebaseAuth.getInstance();
+        entryName = findViewById(R.id.editTextName);
+        entryId = findViewById(R.id.editTextID);
+        entryEmail = findViewById(R.id.editTextEmail);
+        entryPassword = findViewById(R.id.editTextPassword);
+        textButtonSignup = findViewById(R.id.textViewToLogin);
+        buttonSignup = findViewById(R.id.buttonSignUp);
 
-        name_Text = findViewById(R.id.editTextName);
-        ID_Text = findViewById(R.id.editTextID);
-        email_Text = findViewById(R.id.editTextEmail);
-        password_Text = findViewById(R.id.editTextPassword);
-
-        toSignIn = findViewById(R.id.textViewToLogin);
-        buttonSignUp = findViewById(R.id.buttonSignUp);
-        buttonSignUp.setOnClickListener(new View.OnClickListener()
-        {
+        buttonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                final String name = name_Text.getText().toString();
-                final String ID = ID_Text.getText().toString();
-                final String email = email_Text.getText().toString();
-                String password = password_Text.getText().toString();
-                if (name.isEmpty() && ID.isEmpty() && email.isEmpty() && password.isEmpty())
-                {
-                    Toast.makeText(ActivityRegister.this, "Fields are Empty!", Toast.LENGTH_SHORT).show();
+                // Converts the contents of the entries into "clean" strings with no leading or trailing spaces
+                name = entryName.getText().toString().trim();
+                email = entryEmail.getText().toString().trim();
+                id = entryId.getText().toString().trim();
+                password = entryPassword.getText().toString().trim();
+
+                if (name.isEmpty()) {
+                    entryName.setError("Please enter your name");
+                    entryName.requestFocus();
                 }
-                else if (name.isEmpty())
-                {
-                    name_Text.setError("Please enter an email");
-                    name_Text.requestFocus();
+                else if (id.isEmpty()) {
+                    entryId.setError("Please enter an ID");
+                    entryId.requestFocus();
                 }
-                else if (ID.isEmpty())
-                {
-                    ID_Text.setError("Please enter a password");
-                    ID_Text.requestFocus();
+                else if (email.isEmpty()) {
+                    entryEmail.setError("Please enter an email");
+                    entryEmail.requestFocus();
                 }
-                else if (email.isEmpty())
-                {
-                    email_Text.setError("Please enter an email");
-                    email_Text.requestFocus();
+                else if (password.isEmpty()) {
+                    entryPassword.setError("Please enter a password");
+                    entryPassword.requestFocus();
                 }
-                else if (password.isEmpty())
-                {
-                    password_Text.setError("Please enter a password");
-                    password_Text.requestFocus();
-                }
-                else if (!(name.isEmpty() && ID.isEmpty() &&  email.isEmpty() && password.isEmpty()))
-                {
-                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(ActivityRegister.this, new OnCompleteListener<AuthResult>(){
+                else {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(ActivityRegister.this, new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onComplete (@NonNull Task<AuthResult> task)
-                        {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(ActivityRegister.this, "The email or ID provided are already registered.", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                User user = new User(name, ID, email);
+                        public void onComplete (@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Create and setup new user
+                                User user = new User(name, id, email);
 
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user);
-/*
-                                FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
 
-                                        }
-                                    }
-                                });*/
-                                startActivity(new Intent(ActivityRegister.this, ActivityHome.class));
-
-                                finish();
+                                startHome();
+                            }
+                            else {
+                                Toast.makeText(ActivityRegister.this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 }
-                else
-                {
-                    Toast.makeText(ActivityRegister.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
-        toSignIn.setOnClickListener(new View.OnClickListener() {
-
+        textButtonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                Intent i = new Intent(ActivityRegister.this, ActivityLogin.class);
-                startActivity(i);
-
-                finish();
+            public void onClick(View v) {
+                startLogin();
             }
         });
 
