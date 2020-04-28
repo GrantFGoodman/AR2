@@ -19,10 +19,10 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ActivityRegister extends AppCompatActivity
 {
     private FirebaseAuth auth;
-    private EditText entryUserName, entryUserId, entryUserEmail, entryUserPassword;
+    private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
     private Button buttonRegister;
     private TextView textButtonLogin, textButtonForgotPassword;
-    private String username, email, userId, password;
+    private String userName, email, userId, password;
 
     private void startHome()
     {
@@ -68,7 +68,7 @@ public class ActivityRegister extends AppCompatActivity
         setContentView(R.layout.activity_register);
 
         auth = FirebaseAuth.getInstance();
-        entryUserName = findViewById(R.id.entryUserName);
+        entryName = findViewById(R.id.entryUserName);
         entryUserId = findViewById(R.id.entryUserId);
         entryUserEmail = findViewById(R.id.entryUserEmail);
         entryUserPassword = findViewById(R.id.entryUserPassword);
@@ -81,14 +81,14 @@ public class ActivityRegister extends AppCompatActivity
             public void onClick(View v)
             {
                 // Converts the contents of the entries into "clean" strings with no leading or trailing spaces
-                username = entryUserName.getText().toString().trim();
+                userName = entryName.getText().toString().trim();
                 email = entryUserEmail.getText().toString().trim();
                 userId = entryUserId.getText().toString().trim();
                 password = entryUserPassword.getText().toString().trim();
 
-                if (username.isEmpty()) {
-                    entryUserName.setError("Please enter your username");
-                    entryUserName.requestFocus();
+                if (userName.isEmpty()) {
+                    entryName.setError("Please enter your username");
+                    entryName.requestFocus();
                 }
                 else if (userId.isEmpty()) {
                     entryUserId.setError("Please enter your student ID");
@@ -108,7 +108,7 @@ public class ActivityRegister extends AppCompatActivity
                         public void onComplete (@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Create and setup new user
-                                User user = new User(username, email, userId);
+                                User user = new User(userName, email, userId);
 
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
