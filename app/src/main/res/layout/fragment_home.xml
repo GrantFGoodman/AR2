@@ -21,6 +21,7 @@
         android:textSize="35sp"
         android:gravity="center_horizontal" />
 
+    <!--
     <TextView
         android:id="@+id/editText2"
         android:layout_width="match_parent"
@@ -31,6 +32,7 @@
         android:text="@string/home_subtitle"
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
+        -->
 
 
     <ImageButton
@@ -38,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="100dp"
         android:scaleType="fitCenter"
         android:background="@drawable/button_action"
@@ -49,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="100dp"
         android:background="@drawable/button_action"
         android:src="@drawable/ic_menu_camera" />
@@ -59,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="100dp"
         android:background="@drawable/button_action"
         android:src="@android:drawable/ic_menu_upload" />
@@ -69,8 +71,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="100dp"
         android:background="@drawable/button_action"
         android:src="@drawable/ic_chart" />
+
+    <ImageButton
+        android:id="@+id/buttonProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="100dp"
+        android:background="@drawable/button_secondary"
+        android:src="@drawable/ic_person" />
+
+    <TextView
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="70dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:gravity="center_horizontal"
+        android:text="@string/button_logout"
+        android:textColor="@color/OLIVE_GREEN"
+        android:textSize="21sp" />
+
 </LinearLayout>

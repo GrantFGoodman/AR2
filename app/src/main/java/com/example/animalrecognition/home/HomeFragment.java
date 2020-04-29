@@ -27,24 +27,16 @@ public class HomeFragment extends Fragment {
     private Button btnCamera;
     private Object Button;
 
-
-
     private void setContentView(int activity_main) {
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
 
         final Button btnCamera = root.findViewById(R.id.btnCamera);
         imageView = root.findViewById(R.id.imageView);
-
-
-
 
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -56,28 +48,27 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data){
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         Bitmap bitmap = (Bitmap)data.getExtras().get("data");
         imageView.setImageBitmap(bitmap);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
 
-        //adding the camera functionality
+        // adding the camera functionality
 
-//        btnCamera =root.findViewById(R.id.btnCamera);
-//        imageView = root.findViewById(R.id.imageView);
-        btnCamera.setOnClickListener(new View.OnClickListener(){
+        // btnCamera =root.findViewById(R.id.btnCamera);
+        // imageView = root.findViewById(R.id.imageView);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View view){
+            public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent,0);
             }
         });
     }
-
 }
