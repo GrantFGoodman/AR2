@@ -15,7 +15,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
-
 public class ActivityRegister extends AppCompatActivity
 {
     private FirebaseAuth auth;
@@ -106,6 +105,7 @@ public class ActivityRegister extends AppCompatActivity
                                 // Create and setup new user
                                 User user = new User(userName, email, userId);
 
+                                // This does not correctly set the DisplayName property to the name picked out during registration (stored under name)
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user);
