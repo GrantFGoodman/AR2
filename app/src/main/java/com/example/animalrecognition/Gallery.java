@@ -48,13 +48,13 @@ public class Gallery<allFiles> extends Fragment {
         setContentView(R.layout.fragment_gallery);
         recyclerView = (RecyclerView) recyclerView.findViewById(R.id.gallery);
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
-        recyclerView.setLayoutManager(layoutManager);
+        //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
+        //recyclerView.setLayoutManager(layoutManager);
 
 
         ArrayList<cell> cells = prepareData();
-        MyAdapter adapter= new MyAdapter(getApplicationContext(),cells);
-        recyclerView.setAdapter(adapter);
+        //MyAdapter adapter= new MyAdapter(getApplicationContext(),cells);
+        //recyclerView.setAdapter(adapter);
 //        for the storage permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -63,14 +63,13 @@ public class Gallery<allFiles> extends Fragment {
 //            show the images
             showImages();
         }
-
-
     }
 
     private void setContentView(int gallery_fragment) {
     }
 
     private int checkSelfPermission(String readExternalStorage) {
+        return 0;
     }
 
     //    show the images on the screen
@@ -84,9 +83,6 @@ public class Gallery<allFiles> extends Fragment {
 
 //make the list with 3 columns
 
-    }
-
-    private Context getApplicationContext() {
     }
 
 
