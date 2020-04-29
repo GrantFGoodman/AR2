@@ -24,24 +24,21 @@ public class ActivityRegister extends AppCompatActivity
     private TextView textButtonLogin, textButtonForgotPassword;
     private String userName, email, userId, password;
 
-    private void startHome()
-    {
+    private void startHome() {
         Intent intHome = new Intent(ActivityRegister.this, ActivityHome.class);
         startActivity(intHome);
 
         finish();
     }
 
-    private void startLogin()
-    {
+    private void startLogin() {
         Intent intLogin = new Intent(ActivityRegister.this, ActivityLogin.class);
         startActivity(intLogin);
 
         finish();
     }
 
-    private void sendPasswordResetEmail()
-    {
+    private void sendPasswordResetEmail() {
         final String resetEmail = entryUserEmail.getText().toString().trim();
 
         if (resetEmail == null || resetEmail.isEmpty()) {
@@ -62,8 +59,7 @@ public class ActivityRegister extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 

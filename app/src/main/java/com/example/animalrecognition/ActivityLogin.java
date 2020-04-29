@@ -26,16 +26,14 @@ public class ActivityLogin extends AppCompatActivity {
     private TextView textButtonRegister;
     private String email, password;
 
-    private void startHome()
-    {
+    private void startHome() {
         Intent intHome = new Intent(ActivityLogin.this, ActivityHome.class);
         startActivity(intHome);
 
         finish();
     }
 
-    private void startRegistration()
-    {
+    private void startRegistration() {
         Intent intRegister = new Intent(ActivityLogin.this, ActivityRegister.class);
         startActivity(intRegister);
 
@@ -43,8 +41,7 @@ public class ActivityLogin extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -54,8 +51,7 @@ public class ActivityLogin extends AppCompatActivity {
         textButtonRegister = findViewById(R.id.buttonRegister);
         buttonLogin = findViewById(R.id.buttonLogin);
 
-        authListener = new FirebaseAuth.AuthStateListener()
-        {
+        authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = auth.getCurrentUser();

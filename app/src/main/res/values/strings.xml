@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AniRec</string>
+    <string name="app_name">Animal Recognition</string>
     <string name="login_header">Login</string>
     <string name="register_header">Register Account</string>
     <string name="register_already_complete">Already made an account?</string>
@@ -33,5 +33,7 @@
 
     <string name="input_profession">Profession</string>
     <string name="button_profilePicture">Upload Profile Picture</string>
+    <string name="button_logout">Logout</string>
+    <string name="button_goHome">Return Home</string>
     <string name="hint_profilePicture">Profile Picture</string>
 </resources>
