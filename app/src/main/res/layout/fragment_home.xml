@@ -9,6 +9,7 @@
     tools:context=".ActivityHome">
 
     <TextView
+        android:id="@+id/text_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -44,7 +45,7 @@
         android:src="@drawable/ic_gallery" />
 
     <ImageButton
-        android:id="@+id/buttonCamera"
+        android:id="@+id/btnCamera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
