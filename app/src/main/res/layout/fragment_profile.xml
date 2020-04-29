@@ -71,24 +71,29 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/nameHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:fontFamily="@font/segoeui_semibold"
-        android:text="Name"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
-
-    <TextView
         android:id="@+id/emailHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="54dp"
         android:fontFamily="@font/segoeui_semibold"
-        android:text="Email"
-        android:textAlignment="center"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/buttonApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@drawable/button_action"
+        android:fontFamily="@font/segoeui_semibold"
+        android:stateListAnimator="@null"
+        android:text="@string/button_update"
+        android:textAlignment="gravity"
+        android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
