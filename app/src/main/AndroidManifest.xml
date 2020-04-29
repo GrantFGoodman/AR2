@@ -10,9 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ActivityHome"></activity>
-        <activity android:name=".ActivityProfile" />
-        <activity android:name=".ActivityRegister" />
-        <activity android:name=".ActivityLogin" >
+        <activity android:name=".ActivityLogin" />
+        <activity android:name=".ActivityRegister">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
