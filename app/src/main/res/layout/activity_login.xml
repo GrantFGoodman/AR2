@@ -29,7 +29,7 @@
         android:fontFamily="@font/segoeui_semibold"
         android:hint="@string/input_userEmail"
         android:autofillHints="@string/input_userEmail"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="20sp" />

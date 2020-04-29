@@ -30,4 +30,8 @@
 
     <string name="home_second">Home Second</string>
     <string name="myButtonName">Gallery</string>
+
+    <string name="input_profession">Profession</string>
+    <string name="button_profilePicture">Upload Profile Picture</string>
+    <string name="hint_profilePicture">Profile Picture</string>
 </resources>

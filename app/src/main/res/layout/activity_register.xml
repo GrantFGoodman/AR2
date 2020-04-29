@@ -28,7 +28,7 @@
         android:layout_marginTop="10dp"
         android:autofillHints="@string/input_userName"
         android:fontFamily="@font/segoeui_semibold"
-        android:hint="Name"
+        android:hint="@string/input_userName"
         android:inputType="text"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -43,7 +43,7 @@
         android:fontFamily="@font/segoeui_semibold"
         android:hint="@string/input_userEmail"
         android:autofillHints="@string/input_userEmail"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="20sp" />
