@@ -18,6 +18,17 @@
         android:text="@string/header_gallery"
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
+    
+        <GridView
+            android:id="@+id/grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:numColumns="3"
+            android:columnWidth="90dp"
+            android:horizontalSpacing="10dp"
+            android:verticalSpacing="10dp"
+            android:gravity="center"
+            android:stretchMode="columnWidth" />
 
     <Button
         android:id="@+id/buttonGo"
