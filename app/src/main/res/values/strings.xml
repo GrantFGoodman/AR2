@@ -29,8 +29,6 @@
     <string name="menu_logout">Log Out</string>
 
     <string name="button_gallery">My Gallery</string>
-    <string name="button_camera">Take Picture</string>
-    <string name="button_upload">Upload Picture</string>
     <string name="button_stats">Statistics</string>
     <string name="button_profile">Profile Page</string>
     <string name="button_classify">My Studio</string>
@@ -48,4 +46,11 @@
     <string name="button_update">Apply Changes</string>
     <string name="button_resetPassword">Reset Password</string>
     <string name="header_changeProfilePicture">Tap to change profile picture</string>
+
+    <string name="header_gallery">My Pictures:</string>
+    <string name="button_go">Go</string>
+    <string name="button_camera">Take Picture</string>
+    <string name="button_upload">Upload Picture(s)</string>
+    <string name="button_back">Go Back</string>
+
 </resources>

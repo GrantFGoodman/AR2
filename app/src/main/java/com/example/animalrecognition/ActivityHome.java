@@ -34,7 +34,7 @@ public class ActivityHome extends AppCompatActivity
     */
 
     private void startClassify() {
-        Intent intClassify = new Intent(ActivityHome.this, ActivityClassify.class);
+        Intent intClassify = new Intent(ActivityHome.this, ActivityStudio.class);
         startActivity(intClassify);
 
         finish();

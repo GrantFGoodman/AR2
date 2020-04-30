@@ -12,11 +12,11 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ActivityClassify extends AppCompatActivity {
 
     static FirebaseAuth auth;
-    private Button buttonHome;
+    private Button buttonBack;
 
-    private void startHome() {
-        Intent intHome = new Intent(ActivityClassify.this, ActivityHome.class);
-        startActivity(intHome);
+    private void startStudio() {
+        Intent intStudio = new Intent(ActivityClassify.this, ActivityStudio.class);
+        startActivity(intStudio);
 
         finish();
     }
@@ -24,15 +24,15 @@ public class ActivityClassify extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_statistics);
+        setContentView(R.layout.fragment_classifier);
 
         auth = FirebaseAuth.getInstance();
-        buttonHome = findViewById(R.id.buttonHome);
+        buttonBack = findViewById(R.id.buttonBack);
 
-        buttonHome.setOnClickListener(new View.OnClickListener() {
+        buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startHome();
+                startStudio();
             }
         });
     }
