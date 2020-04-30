@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
 
-        final Button btnCamera = root.findViewById(R.id.buttonCamera);
+        //final Button btnCamera = root.findViewById(R.id.buttonCamera);
         imageView = root.findViewById(R.id.imageView);
 
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {

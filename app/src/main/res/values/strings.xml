@@ -33,6 +33,7 @@
     <string name="button_upload">Upload Picture</string>
     <string name="button_stats">Statistics</string>
     <string name="button_profile">Profile Page</string>
+    <string name="button_classify">My Studio</string>
 
     <string name="home_second">Home Second</string>
     <string name="myButtonName">Gallery</string>

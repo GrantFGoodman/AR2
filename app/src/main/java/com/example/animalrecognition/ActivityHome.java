@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ActivityHome extends AppCompatActivity
 {
     static FirebaseAuth auth;
-    private Button buttonProfile, buttonGallery, buttonCamera, buttonUpload, buttonStats;
+    private Button buttonClassify, buttonProfile, buttonStats;
     private TextView textButtonLogout;
 
     private void startProfile() {
@@ -27,9 +27,18 @@ public class ActivityHome extends AppCompatActivity
         finish();
     }
 
+    /*
     private void startGallery() {
         Intent intGallery = new Intent(ActivityHome.this, ActivityGallery.class);
         startActivity(intGallery);
+
+        finish();
+    }
+    */
+
+    private void startClassify() {
+        Intent intClassify = new Intent(ActivityHome.this, ActivityClassify.class);
+        startActivity(intClassify);
 
         finish();
     }
@@ -55,10 +64,8 @@ public class ActivityHome extends AppCompatActivity
         setContentView(R.layout.fragment_home);
 
         auth = FirebaseAuth.getInstance();
+        buttonClassify = findViewById(R.id.buttonClassify);
         buttonProfile = findViewById(R.id.buttonProfile);
-        buttonGallery = findViewById(R.id.buttonGallery);
-        buttonCamera = findViewById(R.id.buttonCamera);
-        buttonUpload = findViewById(R.id.buttonUpload);
         buttonStats = findViewById(R.id.buttonStats);
         textButtonLogout = findViewById(R.id.buttonLogout);
 
@@ -72,17 +79,17 @@ public class ActivityHome extends AppCompatActivity
             }
         });
 
+        buttonClassify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startClassify();
+            }
+        });
+
         buttonProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProfile();
-            }
-        });
-
-        buttonGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startGallery();
             }
         });
 
