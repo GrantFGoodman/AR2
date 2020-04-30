@@ -1,13 +1,10 @@
 package com.example.animalrecognition;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -25,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Nullable;
@@ -32,7 +30,7 @@ import javax.annotation.Nullable;
 public class ActivityStudio extends AppCompatActivity {
 
     private static FirebaseAuth auth;
-    private StorageReference reference;
+    private StorageReference refImageLists;
     private GridView gridView;
     private Button buttonHome, buttonGo, buttonCamera, buttonUpload;
     private static int takeImageCode = 10001;
@@ -43,7 +41,7 @@ public class ActivityStudio extends AppCompatActivity {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        final StorageReference ref = reference.child("Image.jpg");
+        final StorageReference ref = refImageLists.child("image_"+bitmap.hashCode());
 
         ref.putBytes(byteArrayStream.toByteArray())
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -118,23 +116,21 @@ public class ActivityStudio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_studio);
 
+        uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        refImageLists = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
         auth = FirebaseAuth.getInstance();
         buttonHome = findViewById(R.id.buttonHome);
         buttonGo = findViewById(R.id.buttonGo);
         buttonCamera = findViewById(R.id.buttonCamera);
         buttonUpload = findViewById(R.id.buttonUpload);
         gridView = findViewById(R.id.gridView);
-        uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        reference = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
 
         gridView.setAdapter(new com.example.animalrecognition.ImageAdapter(this));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), FullScreenActivity.class);
-                intent.putExtra("id", position);
-                startActivity(intent);
+                Toast.makeText(ActivityStudio.this,"Clicked image", Toast.LENGTH_SHORT).show();
             }
          });
 
@@ -162,5 +158,22 @@ public class ActivityStudio extends AppCompatActivity {
                 getPictureFromGallery();
             }
         });
+
+        final File test = ImageList.imagesDirectory;
+
+        /*
+        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                // Local temp file has been created
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(ActivityStudio.this,"Failed to download file", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+         */
     }
 }
