@@ -1,7 +1,9 @@
 package com.example.animalrecognition;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,23 +25,33 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.annotation.Nullable;
 
 public class ActivityStudio extends AppCompatActivity {
 
-    private static int RESULT_LOAD_IMAGE = 1;
-    static FirebaseAuth auth;
+    private static FirebaseAuth auth;
+    private StorageReference reference;
     private GridView gridView;
     private Button buttonHome, buttonGo, buttonCamera, buttonUpload;
-    int takeImageCode = 10001;
+    private static int takeImageCode = 10001;
+    private static int uploadImageCode = 10002;
+    private String uId;
 
     private void handleUpload(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        String uID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final StorageReference reference = FirebaseStorage.getInstance().getReference()
-                .child(uID + "_ImagesList")
-                .child(uID + ".jpeg");
+        final StorageReference ref = reference.child("Image.jpg");
+
+        ref.putBytes(byteArrayStream.toByteArray())
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //getDownloadURL(reference);
+                    }
+                });
     }
 
     private void startHome() {
@@ -67,7 +80,37 @@ public class ActivityStudio extends AppCompatActivity {
 
         intGallery.setType("image/*");
         intGallery.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intGallery, "Select Picture"), RESULT_LOAD_IMAGE);
+        startActivityForResult(Intent.createChooser(intGallery, "Select Picture"), uploadImageCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == takeImageCode) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    Toast.makeText(ActivityStudio.this, "Uploading from camera", Toast.LENGTH_SHORT).show();
+
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    //profilePicture.setImageBitmap(bitmap);
+                    handleUpload(bitmap);
+            }
+        } else if (requestCode == uploadImageCode) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    Toast.makeText(ActivityStudio.this, "Uploading from gallery", Toast.LENGTH_SHORT).show();
+
+                    Uri selectedImage = data.getData();
+
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                        handleUpload(bitmap);
+                    } catch (IOException e) {
+                        Toast.makeText(ActivityStudio.this, "Upload failed", Toast.LENGTH_SHORT).show();
+                    }
+            }
+        }
     }
 
     @Override
@@ -81,6 +124,8 @@ public class ActivityStudio extends AppCompatActivity {
         buttonCamera = findViewById(R.id.buttonCamera);
         buttonUpload = findViewById(R.id.buttonUpload);
         gridView = findViewById(R.id.gridView);
+        uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        reference = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
 
         gridView.setAdapter(new com.example.animalrecognition.ImageAdapter(this));
 
