@@ -38,5 +38,6 @@
     <string name="button_logout">Logout</string>
     <string name="button_goHome">Return Home</string>
     <string name="hint_profilePicture">Profile Picture</string>
-    <string name="button_update">Apply</string>
+    <string name="button_update">Apply Changes</string>
+    <string name="button_resetPassword">Reset Password</string>
 </resources>

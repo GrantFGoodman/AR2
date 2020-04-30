@@ -38,8 +38,7 @@ public class ActivityRegister extends AppCompatActivity
     private FirebaseFirestore fStore;
     private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
     private Button buttonRegister;
-    private ImageView profilePicture;
-    private TextView textButtonLogin, textButtonForgotPassword;
+    private TextView textButtonLogin;
     private String userName, email, userUid,  userId, password, professionDefault;
 
     private void startHome() {
@@ -56,26 +55,6 @@ public class ActivityRegister extends AppCompatActivity
         finish();
     }
 
-    private void sendPasswordResetEmail() {
-        final String resetEmail = entryUserEmail.getText().toString().trim();
-
-        if (resetEmail == null || resetEmail.isEmpty()) {
-            Toast.makeText(ActivityRegister.this, "Supply valid email to send password reset instructions.", Toast.LENGTH_SHORT).show();
-        } else {
-            FirebaseAuth.getInstance().sendPasswordResetEmail(resetEmail)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(ActivityRegister.this, "Password reset instructions sent to " + resetEmail, Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(ActivityRegister.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +68,6 @@ public class ActivityRegister extends AppCompatActivity
         entryUserPassword = findViewById(R.id.entryUserPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
         textButtonLogin = findViewById(R.id.buttonLogin);
-        textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
 
         professionDefault = "Animal Photographer";
 
@@ -135,14 +113,13 @@ public class ActivityRegister extends AppCompatActivity
                                 Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                                 startHome();
 
-
                                 userUid = auth.getCurrentUser().getUid();
                                 DocumentReference documentReference = fStore.collection("Users").document(userUid);
                                 Map<String,Object> userMap = new HashMap<>();
-                                userMap.put("userName",userName);
-                                userMap.put("email",email);
-                                userMap.put("userId",userId);
-                                userMap.put("profession",professionDefault);
+                                userMap.put("userName", userName);
+                                userMap.put("email", email);
+                                userMap.put("userId", userId);
+                                userMap.put("profession", professionDefault);
                                 documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -171,12 +148,6 @@ public class ActivityRegister extends AppCompatActivity
             }
         });
 
-        textButtonForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendPasswordResetEmail();
-            }
-        });
     }
 
 }

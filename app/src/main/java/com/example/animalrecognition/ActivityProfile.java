@@ -48,9 +48,9 @@ public class ActivityProfile extends AppCompatActivity {
     static FirebaseFirestore fStore;
     public static final String TAG = "TAG";
     static DatabaseReference databaseReference;
-    private Button buttonHome, buttonApply;
-    ImageView profilePicture;
-    private TextView emailHeader;
+    private Button buttonHome, buttonApply, buttonProfilePicture, buttonResetPassword;
+    private ImageView profilePicture;
+    private TextView emailHeader, userIdHeader;
     private EditText entryUserName, entryUserProfession;
     private String userUid, userName, profession;
     int takeImageCode = 10001;
@@ -60,6 +60,21 @@ public class ActivityProfile extends AppCompatActivity {
         startActivity(intHome);
 
         finish();
+    }
+
+    private void sendPasswordResetEmail() {
+        final String email = user.getEmail();
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ActivityProfile.this, "Password reset instructions sent to " + email, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(ActivityProfile.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
     }
 
     @Override
@@ -73,11 +88,14 @@ public class ActivityProfile extends AppCompatActivity {
 
         buttonHome = findViewById(R.id.buttonHome);
         buttonApply = findViewById(R.id.buttonApply);
+        profilePicture = findViewById(R.id.profilePicture);
+        buttonProfilePicture = findViewById(R.id.buttonProfilePicture);
+        buttonResetPassword = findViewById(R.id.buttonResetPassword);
         emailHeader = findViewById(R.id.emailHeader);
+        userIdHeader = findViewById(R.id.userIdHeader);
         entryUserName = findViewById(R.id.entryUserName);
         entryUserProfession = findViewById(R.id.entryUserProfession);
 
-        //entryUserName.setText(user.getDisplayName());
         emailHeader.setText(user.getEmail());
 
         userUid = auth.getCurrentUser().getUid();
@@ -88,9 +106,10 @@ public class ActivityProfile extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 entryUserName.setText(documentSnapshot.getString("name"));
                 entryUserProfession.setText(documentSnapshot.getString("profession"));
+
+                userIdHeader.setText(documentSnapshot.getString("userId"));
             }
         });
-
 
         buttonApply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,13 +130,19 @@ public class ActivityProfile extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(ActivityProfile.this, "Profile Update Successful", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(ActivityProfile.this, "Profile Update Unsuccessful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ActivityProfile.this, "Profile Update Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             }
         });
 
+        buttonResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendPasswordResetEmail();
+            }
+        });
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +150,6 @@ public class ActivityProfile extends AppCompatActivity {
                 startHome();
             }
         });
-
     }
 
     public void handleImageClick(View view) {
@@ -142,7 +166,6 @@ public class ActivityProfile extends AppCompatActivity {
             switch (resultCode) {
                 case RESULT_OK:
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                    profilePicture=findViewById(R.id.profilePicture);
                     profilePicture.setImageBitmap(bitmap);
                     handleUpload(bitmap);
             }
@@ -184,7 +207,7 @@ public class ActivityProfile extends AppCompatActivity {
                 });
     }
 
-    private void setUserProfileURL(Uri uri){
+    private void setUserProfileURL(Uri uri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
@@ -195,7 +218,7 @@ public class ActivityProfile extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(ActivityProfile.this, "Profile picture successfully updated ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityProfile.this, "Profile picture successfully updated", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -204,8 +227,5 @@ public class ActivityProfile extends AppCompatActivity {
                         Toast.makeText(ActivityProfile.this, "Profile picture update unsuccessful", Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
-
-
 }
