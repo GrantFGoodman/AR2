@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ActivityHome extends AppCompatActivity
 {
     static FirebaseAuth auth;
-    private ImageButton buttonProfile, buttonGallery;
+    private ImageButton buttonProfile, buttonGallery, buttonCamera, buttonUpload, buttonStats;
     private TextView textButtonLogout;
 
     private void startProfile() {
@@ -50,6 +50,9 @@ public class ActivityHome extends AppCompatActivity
         auth = FirebaseAuth.getInstance();
         buttonProfile = findViewById(R.id.buttonProfile);
         buttonGallery = findViewById(R.id.buttonGallery);
+        buttonCamera = findViewById(R.id.buttonCamera);
+        buttonUpload = findViewById(R.id.buttonUpload);
+        buttonStats = findViewById(R.id.buttonStats);
         textButtonLogout = findViewById(R.id.buttonLogout);
 
         textButtonLogout.setOnClickListener(new View.OnClickListener() {
