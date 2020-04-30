@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class ActivityHome extends AppCompatActivity
 {
     static FirebaseAuth auth;
-    private ImageButton buttonProfile, buttonGallery, buttonCamera, buttonUpload, buttonStats;
+    private Button buttonProfile, buttonGallery, buttonCamera, buttonUpload, buttonStats;
     private TextView textButtonLogout;
 
     private void startProfile() {
@@ -30,6 +30,13 @@ public class ActivityHome extends AppCompatActivity
     private void startGallery() {
         Intent intGallery = new Intent(ActivityHome.this, ActivityGallery.class);
         startActivity(intGallery);
+
+        finish();
+    }
+
+    private void startStats() {
+        Intent intStats = new Intent(ActivityHome.this, ActivityStats.class);
+        startActivity(intStats);
 
         finish();
     }
@@ -76,6 +83,13 @@ public class ActivityHome extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 startGallery();
+            }
+        });
+
+        buttonStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStats();
             }
         });
     }
