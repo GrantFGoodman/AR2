@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-public class GalleryActivity extends AppCompatActivity {
+public class ActivityGallery extends AppCompatActivity {
 
     GridView gridView;
 
