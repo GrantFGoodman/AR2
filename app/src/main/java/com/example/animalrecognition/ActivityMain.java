@@ -1,7 +1,5 @@
 package com.example.animalrecognition;
 
-
-
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -18,7 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 

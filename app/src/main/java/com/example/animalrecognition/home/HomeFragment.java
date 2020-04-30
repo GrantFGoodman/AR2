@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.animalrecognition.R;
 
+/*
 public class HomeFragment extends Fragment {
 
     ImageView imageView;
@@ -72,3 +73,4 @@ public class HomeFragment extends Fragment {
         });
     }
 }
+*/
