@@ -40,4 +40,5 @@
     <string name="hint_profilePicture">Profile Picture</string>
     <string name="button_update">Apply Changes</string>
     <string name="button_resetPassword">Reset Password</string>
+    <string name="header_changeProfilePicture">Click to change profile picture</string>
 </resources>

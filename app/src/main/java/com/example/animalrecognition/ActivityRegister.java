@@ -115,7 +115,7 @@ public class ActivityRegister extends AppCompatActivity
 
                                 userUid = auth.getCurrentUser().getUid();
                                 DocumentReference documentReference = fStore.collection("Users").document(userUid);
-                                Map<String,Object> userMap = new HashMap<>();
+                                Map<String, Object> userMap = new HashMap<>();
                                 userMap.put("userName", userName);
                                 userMap.put("email", email);
                                 userMap.put("userId", userId);

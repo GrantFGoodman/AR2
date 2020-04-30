@@ -48,7 +48,7 @@ public class ActivityProfile extends AppCompatActivity {
     static FirebaseFirestore fStore;
     public static final String TAG = "TAG";
     static DatabaseReference databaseReference;
-    private Button buttonHome, buttonApply, buttonProfilePicture, buttonResetPassword;
+    private Button buttonHome, buttonApply, buttonResetPassword;
     private ImageView profilePicture;
     private TextView emailHeader, userIdHeader;
     private EditText entryUserName, entryUserProfession;
@@ -89,7 +89,6 @@ public class ActivityProfile extends AppCompatActivity {
         buttonHome = findViewById(R.id.buttonHome);
         buttonApply = findViewById(R.id.buttonApply);
         profilePicture = findViewById(R.id.profilePicture);
-        buttonProfilePicture = findViewById(R.id.buttonProfilePicture);
         buttonResetPassword = findViewById(R.id.buttonResetPassword);
         emailHeader = findViewById(R.id.emailHeader);
         userIdHeader = findViewById(R.id.userIdHeader);
@@ -97,7 +96,6 @@ public class ActivityProfile extends AppCompatActivity {
         entryUserProfession = findViewById(R.id.entryUserProfession);
 
         emailHeader.setText(user.getEmail());
-
         userUid = auth.getCurrentUser().getUid();
 
         DocumentReference documentReferenceInfo = fStore.collection("Users").document(userUid);
@@ -108,6 +106,8 @@ public class ActivityProfile extends AppCompatActivity {
                 entryUserProfession.setText(documentSnapshot.getString("profession"));
 
                 userIdHeader.setText(documentSnapshot.getString("userId"));
+
+                //profilePicture.setImageBitmap();
             }
         });
 
@@ -173,15 +173,15 @@ public class ActivityProfile extends AppCompatActivity {
     }
 
     private void handleUpload(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
         String uID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final  StorageReference reference = FirebaseStorage.getInstance().getReference()
                 .child("ProfileImages")
                 .child(uID + ".jpeg");
 
-        reference.putBytes(baos.toByteArray())
+        reference.putBytes(byteArrayStream.toByteArray())
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
