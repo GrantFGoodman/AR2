@@ -23,7 +23,7 @@ public class ActivityLogin extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authListener;
     private EditText entryEmail, entryPassword;
     private Button buttonLogin;
-    private TextView textButtonRegister;
+    private TextView textButtonRegister, textButtonForgotPassword;
     private String email, password;
 
     private void startHome() {
@@ -40,6 +40,26 @@ public class ActivityLogin extends AppCompatActivity {
         finish();
     }
 
+    private void sendPasswordResetEmail() {
+        final String resetEmail = entryEmail.getText().toString().trim();
+
+        if (resetEmail == null || resetEmail.isEmpty()) {
+            Toast.makeText(ActivityLogin.this, "Supply valid email to send password reset instructions.", Toast.LENGTH_SHORT).show();
+        } else {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(resetEmail)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ActivityLogin.this, "Password reset instructions sent to " + resetEmail, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(ActivityLogin.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +70,7 @@ public class ActivityLogin extends AppCompatActivity {
         entryPassword = findViewById(R.id.entryUserPassword);
         textButtonRegister = findViewById(R.id.buttonRegister);
         buttonLogin = findViewById(R.id.buttonLogin);
+        textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
 
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -102,6 +123,13 @@ public class ActivityLogin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startRegistration();
+            }
+        });
+
+        textButtonForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendPasswordResetEmail();
             }
         });
     }

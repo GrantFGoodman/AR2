@@ -26,6 +26,7 @@
             android:src="@drawable/ic_person" 
             android:onClick="handleImageClick"/>
 
+        <!--
         <Button
             android:id="@+id/buttonProfilePicture"
             android:layout_width="wrap_content"
@@ -40,8 +41,21 @@
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
-
+            -->
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/buttonForgotPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="70dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:gravity="center_horizontal"
+        android:text="@string/header_changeProfilePicture"
+        android:textColor="#FFFFFF"
+        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/entryUserName"
@@ -82,12 +96,23 @@
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/userIdHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="54dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
     <Button
         android:id="@+id/buttonApply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:padding="10dp"
         android:background="@drawable/button_action"
         android:fontFamily="@font/segoeui_semibold"
@@ -99,11 +124,27 @@
         android:textSize="20sp" />
 
     <Button
+        android:id="@+id/buttonResetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:background="@drawable/button_action"
+        android:fontFamily="@font/segoeui_semibold"
+        android:stateListAnimator="@null"
+        android:text="@string/button_resetPassword"
+        android:textAlignment="gravity"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <Button
         android:id="@+id/buttonHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:padding="15dp"
         android:background="@drawable/button_secondary"
         android:fontFamily="@font/segoeui_semibold"
