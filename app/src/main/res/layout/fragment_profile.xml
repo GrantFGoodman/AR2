@@ -23,7 +23,8 @@
             android:layout_width="122dp"
             android:layout_height="122dp"
             android:contentDescription="@string/hint_profilePicture"
-            android:src="@drawable/ic_person" />
+            android:src="@drawable/ic_person" 
+            android:onClick="handleImageClick"/>
 
         <Button
             android:id="@+id/buttonProfilePicture"

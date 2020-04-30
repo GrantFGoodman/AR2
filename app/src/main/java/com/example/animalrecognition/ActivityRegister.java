@@ -1,8 +1,12 @@
 package com.example.animalrecognition;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -10,18 +14,33 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActivityRegister extends AppCompatActivity
 {
+    public static final String TAG = "TAG";
     private FirebaseAuth auth;
+    private FirebaseFirestore fStore;
     private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
     private Button buttonRegister;
+    private ImageView profilePicture;
     private TextView textButtonLogin, textButtonForgotPassword;
-    private String userName, email, userId, password;
+    private String userName, email, userUid,  userId, password, professionDefault;
 
     private void startHome() {
         Intent intHome = new Intent(ActivityRegister.this, ActivityHome.class);
@@ -63,6 +82,7 @@ public class ActivityRegister extends AppCompatActivity
         setContentView(R.layout.activity_register);
 
         auth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
         entryName = findViewById(R.id.entryUserName);
         entryUserId = findViewById(R.id.entryUserId);
         entryUserEmail = findViewById(R.id.entryUserEmail);
@@ -70,6 +90,8 @@ public class ActivityRegister extends AppCompatActivity
         buttonRegister = findViewById(R.id.buttonRegister);
         textButtonLogin = findViewById(R.id.buttonLogin);
         textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
+
+        professionDefault = "Animal Photographer";
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +125,7 @@ public class ActivityRegister extends AppCompatActivity
                         public void onComplete (@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Create and setup new user
-                                User user = new User(userName, email, userId);
+                                User user = new User(userName, email, userId, professionDefault);
 
                                 // This does not correctly set the DisplayName property to the name picked out during registration (stored under name)
                                 FirebaseDatabase.getInstance().getReference("Users")
@@ -112,6 +134,26 @@ public class ActivityRegister extends AppCompatActivity
 
                                 Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                                 startHome();
+
+
+                                userUid = auth.getCurrentUser().getUid();
+                                DocumentReference documentReference = fStore.collection("Users").document(userUid);
+                                Map<String,Object> userMap = new HashMap<>();
+                                userMap.put("userName",userName);
+                                userMap.put("email",email);
+                                userMap.put("userId",userId);
+                                userMap.put("profession",professionDefault);
+                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "User profile created for " + email);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "Failure to create profile " + e.toString());
+                                    }
+                                });
                             }
                             else {
                                 Toast.makeText(ActivityRegister.this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -136,6 +178,7 @@ public class ActivityRegister extends AppCompatActivity
             }
         });
     }
+
 }
 
 

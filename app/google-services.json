@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1046669596574-k3ac51qp0dhd8rg5lo92hmpq0eavfsno.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.animalrecognition",
+            "certificate_hash": "f659127e4e524a108aecf6fc7a0b4b72391eaf25"
+          }
+        },
+        {
           "client_id": "1046669596574-7r09g6tsdkughaen68c809p9niv5ckbe.apps.googleusercontent.com",
           "client_type": 3
         }
