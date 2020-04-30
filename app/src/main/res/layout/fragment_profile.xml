@@ -20,10 +20,10 @@
 
         <ImageView
             android:id="@+id/profilePicture"
-            android:layout_width="122dp"
-            android:layout_height="122dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:contentDescription="@string/hint_profilePicture"
-            android:src="@drawable/ic_person" 
+            android:src="@drawable/ic_profileicon"
             android:onClick="handleImageClick"/>
 
         <!--
@@ -43,19 +43,6 @@
             android:textSize="20sp" />
             -->
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/buttonForgotPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="70dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="@font/segoeui_semibold"
-        android:gravity="center_horizontal"
-        android:text="@string/header_changeProfilePicture"
-        android:textColor="#FFFFFF"
-        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/entryUserName"
