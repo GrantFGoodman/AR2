@@ -1,10 +1,12 @@
+/*
 package com.example.animalrecognition;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -199,3 +201,4 @@ public class CustomModelActivity extends AppCompatActivity {
         return Bitmap.createBitmap(0, 0, Bitmap.Config.ALPHA_8);
     }
 }
+*/

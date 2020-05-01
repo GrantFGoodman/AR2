@@ -11,10 +11,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -36,6 +34,8 @@ public class ActivityStudio extends AppCompatActivity {
     private static int takeImageCode = 10001;
     private static int uploadImageCode = 10002;
     private String uId;
+
+    private Bitmap test2;
 
     private void handleUpload(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
@@ -91,6 +91,7 @@ public class ActivityStudio extends AppCompatActivity {
                     Toast.makeText(ActivityStudio.this, "Uploading from camera", Toast.LENGTH_SHORT).show();
 
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    test2 = bitmap;
                     //profilePicture.setImageBitmap(bitmap);
                     handleUpload(bitmap);
             }
@@ -143,7 +144,7 @@ public class ActivityStudio extends AppCompatActivity {
         buttonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startClassify();
+                Toast.makeText(ActivityStudio.this, LearningModel.Interpret(test2), Toast.LENGTH_SHORT).show();
             }
         });
         buttonCamera.setOnClickListener(new View.OnClickListener() {
