@@ -60,7 +60,7 @@ public class ActivityStats extends AppCompatActivity {
                 headerIncorrect.setText("Incorrect Guesses: " + incorrectGuesses);
 
                 if (correctGuesses > 0 && incorrectGuesses > 0) {
-                    headerAccuracy.setText(String.format("Reported Accuracy: %.2f", ((double) correctGuesses / incorrectGuesses) * 100) + "%");
+                    headerAccuracy.setText(String.format("Reported Accuracy: %.2f", ((double) correctGuesses / (correctGuesses + incorrectGuesses)) * 100) + "%");
                 }
             }
         });

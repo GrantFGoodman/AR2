@@ -49,24 +49,24 @@
             android:id="@+id/headerCorrect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="5dp"
             android:fontFamily="@font/segoeui_semibold"
             android:textAlignment="center"
             android:text=""
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:gravity="center_horizontal" />
 
         <TextView
             android:id="@+id/headerIncorrect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="5dp"
             android:fontFamily="@font/segoeui_semibold"
             android:textAlignment="center"
             android:text=""
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:gravity="center_horizontal" />
     </LinearLayout>
 
