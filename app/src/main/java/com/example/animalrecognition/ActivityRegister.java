@@ -62,7 +62,6 @@ public class ActivityRegister extends AppCompatActivity
         entryUserPassword = findViewById(R.id.entryUserPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
         textButtonLogin = findViewById(R.id.buttonLogin);
-
         professionDefault = "Animal Photographer";
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +100,7 @@ public class ActivityRegister extends AppCompatActivity
                     entryUserPassword.requestFocus();
                 }
                 else {
+                    // Actual user registration located here
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(ActivityRegister.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete (@NonNull Task<AuthResult> task) {

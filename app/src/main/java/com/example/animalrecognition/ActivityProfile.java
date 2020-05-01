@@ -97,6 +97,7 @@ public class ActivityProfile extends AppCompatActivity {
         emailHeader.setText(user.getEmail());
         userUid = auth.getCurrentUser().getUid();
 
+        // Propagate the edit name and profession fields with the stuff saved in the database
         DocumentReference documentReferenceInfo = fStore.collection("Users").document(userUid);
         documentReferenceInfo.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -108,6 +109,7 @@ public class ActivityProfile extends AppCompatActivity {
             }
         });
 
+        // Propagate profile picture from the stuff stored in database
         if (user.getPhotoUrl() != null) {
             Glide.with(this).load(user.getPhotoUrl()).into(profilePicture);
         }
@@ -116,11 +118,13 @@ public class ActivityProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                // Converts the contents of the entries into "clean" strings with no leading or trailing spaces
                 userName = entryUserName.getText().toString().trim();
                 profession = entryUserProfession.getText().toString().trim();
 
                 DocumentReference documentReferenceUpdate = fStore.collection("Users").document(userUid);
 
+                // Sanitize inputs to make sure they meet requirements
                 if (userName.isEmpty()) {
                     entryUserName.setError("Please enter your name");
                     entryUserName.requestFocus();
@@ -131,6 +135,7 @@ public class ActivityProfile extends AppCompatActivity {
                     entryUserProfession.setError("Please enter your profession");
                     entryUserProfession.requestFocus();
                 } else {
+                    // Push the new information to the database
                     documentReferenceUpdate.update("name", userName, "profession", profession)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -160,6 +165,8 @@ public class ActivityProfile extends AppCompatActivity {
             }
         });
     }
+
+    // The following functions handle profile picture uploading
 
     public void handleImageClick(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

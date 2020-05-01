@@ -52,18 +52,19 @@ public class ActivityStudio extends AppCompatActivity {
     private int output = 64;
     private String[] labels =
             {
-                    "Sheep",
-                    "Dog",
-                    "Elephant",
-                    "Cat",
-                    "Spider",
-                    "Squirrel",
-                    "Chicken",
-                    "Butterfly",
-                    "Cow",
-                    "Horse"
+                    "a butterfly",
+                    "a cat",
+                    "a chicken",
+                    "a cow",
+                    "a dog",
+                    "an elephant",
+                    "a horse",
+                    "a sheep",
+                    "a spider",
+                    "a squirrel"
             };
 
+    // Uploads images to be stored in the firebase backend
     private void handleUpload(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
@@ -86,15 +87,7 @@ public class ActivityStudio extends AppCompatActivity {
         finish();
     }
 
-    /*
-    private void startClassify() {
-        Intent intClassify = new Intent(ActivityStudio.this, ActivityClassify.class);
-        startActivity(intClassify);
-
-        finish();
-    }
-     */
-
+    // Opens camera widget
     private void takePicture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -102,6 +95,7 @@ public class ActivityStudio extends AppCompatActivity {
         }
     }
 
+    // Opens gallery widget
     private void getPictureFromGallery() {
         Intent intGallery = new Intent();
 
@@ -110,6 +104,7 @@ public class ActivityStudio extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intGallery, "Select Picture"), uploadImageCode);
     }
 
+    // The following handles processing of all image submission (camera or gallery)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -159,17 +154,6 @@ public class ActivityStudio extends AppCompatActivity {
         buttonUpload = findViewById(R.id.buttonUpload);
         picture = findViewById(R.id.picture);
 
-        /*
-        gridView.setAdapter(new com.example.animalrecognition.ImageAdapter(this));
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ActivityStudio.this,"Clicked image", Toast.LENGTH_SHORT).show();
-            }
-         });
-         */
-
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,6 +176,7 @@ public class ActivityStudio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                // Start recognizing the image
                 if (currentImage != null) {
                     FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
                             .setAssetFilePath("recognitionModel.tflite")
@@ -223,14 +208,12 @@ public class ActivityStudio extends AppCompatActivity {
 
                     Bitmap bitmap = Bitmap.createScaledBitmap(currentImage, size, size, true);
 
+                    // Normalize channel values to [-1.0, 1.0]
                     int batchNum = 0;
                     float[][][][] input = new float[1][size][size][depth];
                     for (int x = 0; x < size; x++) {
                         for (int y = 0; y < size; y++) {
                             int pixel = bitmap.getPixel(x, y);
-                            // Normalize channel values to [-1.0, 1.0]. This requirement varies by
-                            // model. For example, some models might require values to be normalized
-                            // to the range [0.0, 1.0] instead.
                             input[batchNum][x][y][0] = (Color.red(pixel) - 127) / 128.0f;
                             input[batchNum][x][y][1] = (Color.green(pixel) - 127) / 128.0f;
                             input[batchNum][x][y][2] = (Color.blue(pixel) - 127) / 128.0f;
@@ -240,12 +223,13 @@ public class ActivityStudio extends AppCompatActivity {
                     FirebaseModelInputs inputs = null;
                     try {
                         inputs = new FirebaseModelInputs.Builder()
-                                .add(input)  // add() as many input arrays as your model requires
+                                .add(input)
                                 .build();
                     } catch (FirebaseMLException e) {
                         Log.i("MLKit", e.getMessage());
                     }
 
+                    // Actually interpret the image and show the result to the user
                     interpreter.run(inputs, inputOutputOptions)
                             .addOnSuccessListener(
                                     new OnSuccessListener<FirebaseModelOutputs>() {
@@ -260,13 +244,14 @@ public class ActivityStudio extends AppCompatActivity {
                                             for (int i = 0; i < probabilities.length; i++) {
                                                 Log.i("MLKit", String.format("%s: %1.4f", labels[i % labels.length], probabilities[i]));
 
+                                                // Pick out the prediction with the highest weighting
                                                 if (probabilities[i] > highestProbability) {
                                                     likeliest = labels[i % labels.length];
                                                     highestProbability = probabilities[i];
                                                 }
                                             }
 
-                                            Toast.makeText(ActivityStudio.this, "Image contains a(n) " + likeliest, Toast.LENGTH_LONG).show();
+                                            Toast.makeText(ActivityStudio.this, "Image contains " + likeliest, Toast.LENGTH_LONG).show();
                                         }
                                     })
                             .addOnFailureListener(
@@ -281,22 +266,5 @@ public class ActivityStudio extends AppCompatActivity {
                 }
             }
         });
-
-        //final File test = ImageList.imagesDirectory;
-
-        /*
-        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                // Local temp file has been created
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(ActivityStudio.this,"Failed to download file", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-         */
     }
 }

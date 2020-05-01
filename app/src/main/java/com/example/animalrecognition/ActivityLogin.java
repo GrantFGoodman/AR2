@@ -1,15 +1,15 @@
 package com.example.animalrecognition;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.EditText;
-import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,6 +72,7 @@ public class ActivityLogin extends AppCompatActivity {
         buttonLogin = findViewById(R.id.buttonLogin);
         textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
 
+        // Automatically skip to the home screen if we already have a login cookie
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -80,10 +81,6 @@ public class ActivityLogin extends AppCompatActivity {
                 if (user != null) {
                     startHome();
                 }
-                /* Pointing this out to the user seems redundant
-                else {
-                    Toast.makeText(ActivityLogin.this, "You are not already logged in.", Toast.LENGTH_SHORT).show();
-                }*/
             }
         };
 
@@ -94,6 +91,7 @@ public class ActivityLogin extends AppCompatActivity {
                 email = entryEmail.getText().toString().trim();
                 password = entryPassword.getText().toString().trim();
 
+                // Validate a few inputs
                 if (email.isEmpty()) {
                   entryEmail.setError("Please enter an email");
                   entryEmail.requestFocus();
