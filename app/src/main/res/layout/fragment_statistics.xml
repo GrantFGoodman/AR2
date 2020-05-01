@@ -13,13 +13,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:fontFamily="@font/segoeui_semibold"
         android:textAlignment="center"
         android:text="@string/header_stats"
         android:textColor="#FFFFFF"
         android:textSize="35sp"
         android:gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="5dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+    <ImageView
+        android:id="@+id/graph1"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/graph1" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
