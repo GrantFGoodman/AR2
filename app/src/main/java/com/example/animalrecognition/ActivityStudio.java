@@ -22,6 +22,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
@@ -104,6 +105,7 @@ public class ActivityStudio extends AppCompatActivity {
 
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                        test2 = bitmap;
                         handleUpload(bitmap);
                     } catch (IOException e) {
                         Toast.makeText(ActivityStudio.this, "Upload failed", Toast.LENGTH_SHORT).show();
@@ -141,12 +143,6 @@ public class ActivityStudio extends AppCompatActivity {
                 startHome();
             }
         });
-        buttonGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ActivityStudio.this, LearningModel.Interpret(test2), Toast.LENGTH_SHORT).show();
-            }
-        });
         buttonCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,6 +153,20 @@ public class ActivityStudio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getPictureFromGallery();
+            }
+        });
+        buttonGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputStream labelReference = null;
+
+                try {
+                    labelReference = getAssets().open("labels.txt");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                };
+
+                Toast.makeText(ActivityStudio.this, LearningModel.Interpret(test2, labelReference), Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -1,6 +1,5 @@
 package com.example.animalrecognition;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
@@ -20,43 +19,43 @@ import com.google.firebase.ml.custom.FirebaseModelOutputs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 // Borrows code implementation from https://firebase.google.com/docs/ml-kit/android/use-custom-models
 
 public final class LearningModel {
 
-    private static Context context;
+    public static String Interpret(Bitmap bitmap, final InputStream labels) {
 
-    static FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
-            .setAssetFilePath("recognitionModel.tflite")
-            .build();
+        FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
+                .setAssetFilePath("recognitionModel.tflite")
+                .build();
 
-    static FirebaseModelInterpreterOptions options = new FirebaseModelInterpreterOptions.Builder(model).build();
-    static FirebaseModelInterpreter interpreter;
+        FirebaseModelInterpreterOptions options = new FirebaseModelInterpreterOptions.Builder(model).build();
+        FirebaseModelInterpreter interpreter = null;
 
-    {
-        try {
-            interpreter = FirebaseModelInterpreter.getInstance(options);
-        } catch (FirebaseMLException e) {
-            e.printStackTrace();
+        {
+            try {
+                interpreter = FirebaseModelInterpreter.getInstance(options);
+            } catch (FirebaseMLException e) {
+                Log.i("MLKit", e.getMessage());
+            }
         }
-    }
 
-    static FirebaseModelInputOutputOptions inputOutputOptions;
+        FirebaseModelInputOutputOptions inputOutputOptions = null;
 
-    {
-        try {
-            inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
-                    .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 100, 100, 3})
-                    .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 64})
-                    .build();
-        } catch (FirebaseMLException e) {
-            e.printStackTrace();
+        {
+            try {
+                inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
+                        .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 100, 100, 3})
+                        .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 64})
+                        .build();
+            } catch (FirebaseMLException e) {
+                Log.i("MLKit", e.getMessage());
+            }
         }
-    }
 
-    public static String Interpret(Bitmap bitmap) {
         bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
 
         int batchNum = 0;
@@ -75,12 +74,14 @@ public final class LearningModel {
 
         FirebaseModelInputs inputs = null;
         try {
+            Log.i("MLKit", input.toString());
             inputs = new FirebaseModelInputs.Builder()
                     .add(input)  // add() as many input arrays as your model requires
                     .build();
         } catch (FirebaseMLException e) {
-            e.printStackTrace();
+            Log.i("MLKit", e.getMessage());
         }
+
         interpreter.run(inputs, inputOutputOptions)
                 .addOnSuccessListener(
                         new OnSuccessListener<FirebaseModelOutputs>() {
@@ -89,30 +90,33 @@ public final class LearningModel {
                                 float[][] output = result.getOutput(0);
                                 float[] probabilities = output[0];
 
-                                BufferedReader reader = null;
-                                try {
-                                    reader = new BufferedReader(new InputStreamReader(context.getAssets().open("labels.txt")));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(labels));
+
+                                float highestProb = 0;
+                                String likeliest = "";
 
                                 for (int i = 0; i < probabilities.length; i++) {
                                     String label = null;
                                     try {
                                         label = reader.readLine();
                                     } catch (IOException e) {
-                                        e.printStackTrace();
+                                        Log.i("MLKit", e.getMessage());
                                     }
                                     Log.i("MLKit", String.format("%s: %1.4f", label, probabilities[i]));
+
+                                    if (probabilities[i] > highestProb) {
+                                        highestProb = probabilities[i];
+                                        likeliest = label;
+                                    }
                                 }
+                                Log.i("MLKit", likeliest);
                             }
                         })
                 .addOnFailureListener(
                         new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                // Task failed with an exception
-                                // ...
+                                Log.i("MLKit", e.getMessage());
                             }
                         });
 
