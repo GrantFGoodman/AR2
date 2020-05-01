@@ -30,7 +30,7 @@ public class ActivityRegister extends AppCompatActivity
     private FirebaseAuth auth;
     private FirebaseFirestore fStore;
     private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
-    private String userName, email, userUid, uId, password, professionDefault;
+    private String userName, email, uId, userId, password, professionDefault;
 
     private void startHome() {
         Intent intHome = new Intent(ActivityRegister.this, ActivityHome.class);
@@ -68,7 +68,7 @@ public class ActivityRegister extends AppCompatActivity
                 // Converts the contents of the entries into "clean" strings with no leading or trailing spaces
                 userName = entryName.getText().toString().trim();
                 email = entryUserEmail.getText().toString().trim();
-                uId = entryUserId.getText().toString().trim();
+                userId = entryUserId.getText().toString().trim();
                 password = entryUserPassword.getText().toString().trim();
 
                 // Sanitize inputs to make sure they meet requirements before allowing registration
@@ -84,11 +84,11 @@ public class ActivityRegister extends AppCompatActivity
                     entryUserEmail.setError("Please enter your email");
                     entryUserEmail.requestFocus();
                 }
-                else if (uId.isEmpty()) {
+                else if (userId.isEmpty()) {
                     entryUserId.setError("Please enter your student ID");
                     entryUserId.requestFocus();
                 }
-                else if (uId.length() != 10) {
+                else if (userId.length() != 10) {
                     entryUserId.setError("Student ID must be 10 characters");
                     entryUserId.requestFocus();
                 }
@@ -105,14 +105,14 @@ public class ActivityRegister extends AppCompatActivity
                                 Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
 
                                 // Create and setup new user
-                                User user = new User(userName, email, uId, professionDefault);
+                                User user = new User(userName, email, userId, professionDefault);
 
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                                         .setValue(user);
 
-                                userUid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-                                DocumentReference documentReference = fStore.collection("Users").document(userUid);
+                                uId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+                                DocumentReference documentReference = fStore.collection("Users").document(uId);
                                 /*
                                 Map<String, Object> userMap = new HashMap<>();
                                 userMap.put("userName", userName);
