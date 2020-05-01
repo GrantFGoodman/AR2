@@ -1,5 +1,6 @@
 package com.example.animalrecognition;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,8 +22,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.ml.common.FirebaseMLException;
 import com.google.firebase.ml.custom.FirebaseCustomLocalModel;
 import com.google.firebase.ml.custom.FirebaseModelDataType;
@@ -43,23 +47,26 @@ import javax.annotation.Nullable;
 
 public class ActivityStudio extends AppCompatActivity {
 
+    private String uId;
     private FirebaseFirestore fStore;
     private StorageReference refImageLists;
     private ImageView picture;
     private Button buttonGo;
     private LinearLayout layoutOptions;
     private TextView headerAccuracy;
+    private TextView headerCounter;
+    private Bitmap currentImage;
+    private int localCounter = 0;
+
     private static int takeImageCode = 10001;
     private static int uploadImageCode = 10002;
-    private String uId;
-
-    private Bitmap currentImage;
 
     // Parameters for the network itself taken from the tensorflow tool
-    private int size = 100;
-    private int depth = 3;
-    private int output = 64;
-    private String[] labels =
+    private final int size = 100;
+    private final int depth = 3;
+    private final int output = 64;
+    private final String modelName = "AniRec_Model2.tflite";
+    private final String[] labels =
             {
                     "a butterfly",
                     "a cat",
@@ -85,7 +92,7 @@ public class ActivityStudio extends AppCompatActivity {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        final StorageReference ref = refImageLists.child("image_" + bitmap.hashCode());
+        final StorageReference ref = refImageLists.child("image_" + localCounter);
 
         ref.putBytes(byteArrayStream.toByteArray())
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -112,8 +119,9 @@ public class ActivityStudio extends AppCompatActivity {
         }
     }
 
-    private void showError() {
-        Toast.makeText(ActivityStudio.this, "An error occurred", Toast.LENGTH_SHORT).show();
+    private void showError(String err) {
+        Log.i("MLKit", err);
+        Toast.makeText(ActivityStudio.this, err, Toast.LENGTH_SHORT).show();
     }
 
     private void pushImage(Bitmap bitmap) {
@@ -121,11 +129,23 @@ public class ActivityStudio extends AppCompatActivity {
 
         picture.setImageBitmap(bitmap);
         currentImage = bitmap;
+
+        DocumentReference ref = fStore.collection("Users").document(uId);
+        ref.update("counter", FieldValue.increment(1));
+
+        localCounter++;
+        headerCounter.setText(localCounter + " Image(s) Left");
     }
 
     private void popImage() {
         picture.setImageResource(R.drawable.ic_gallery);
         currentImage = null;
+
+        DocumentReference ref = fStore.collection("Users").document(uId);
+        ref.update("counter", FieldValue.increment(-1));
+
+        localCounter--;
+        headerCounter.setText(localCounter + " Image(s) Left");
     }
 
     // Opens camera widget
@@ -164,12 +184,11 @@ public class ActivityStudio extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
                     pushImage(bitmap);
                 } catch (IOException e) {
-                    Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
-                    showError();
+                    showError(Objects.requireNonNull(e.getMessage()));
                 }
             }
         } else {
-            showError();
+            showError("An error occurred");
         }
     }
 
@@ -179,18 +198,34 @@ public class ActivityStudio extends AppCompatActivity {
         setContentView(R.layout.fragment_studio);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
+
         fStore = FirebaseFirestore.getInstance();
         uId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
         refImageLists = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
         picture = findViewById(R.id.picture);
-        Button buttonHome = findViewById(R.id.buttonHome);
+        layoutOptions = findViewById(R.id.layoutOptions);
+        headerAccuracy = findViewById(R.id.headerAccuracy);
+        headerCounter = findViewById(R.id.counter);
         buttonGo = findViewById(R.id.buttonGo);
+        Button buttonHome = findViewById(R.id.buttonHome);
         Button buttonCamera = findViewById(R.id.buttonCamera);
         Button buttonUpload = findViewById(R.id.buttonUpload);
         Button buttonYes = findViewById(R.id.buttonYes);
         Button buttonNo = findViewById(R.id.buttonNo);
-        layoutOptions = findViewById(R.id.layoutOptions);
-        headerAccuracy = findViewById(R.id.headerAccuracy);
+
+        // Propagate the counter field with the stuff saved in the database
+        DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
+        documentReferenceInfo.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @SuppressLint({"DefaultLocale", "SetTextI18n"})
+            @Override
+            public void onEvent(@com.google.firebase.database.annotations.Nullable DocumentSnapshot documentSnapshot, @com.google.firebase.database.annotations.Nullable FirebaseFirestoreException e) {
+                // Get the counter in a readable format (or 0 if it's null on the server)
+                Double counterRaw = documentSnapshot.getDouble("counter");
+
+                localCounter = (counterRaw != null) ? counterRaw.intValue() : 0;
+                headerCounter.setText(localCounter + " Image(s) Left");
+            }
+        });
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,8 +251,8 @@ public class ActivityStudio extends AppCompatActivity {
                 toggleImageOptions(false, "");
                 Toast.makeText(ActivityStudio.this, "Hooray!", Toast.LENGTH_SHORT).show();
 
-                DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
-                documentReferenceInfo.update("correctGuesses", FieldValue.increment(1));
+                DocumentReference ref = fStore.collection("Users").document(uId);
+                ref.update("correctGuesses", FieldValue.increment(1));
 
                 popImage();
             }
@@ -228,8 +263,8 @@ public class ActivityStudio extends AppCompatActivity {
                 toggleImageOptions(false, "");
                 Toast.makeText(ActivityStudio.this, "Feedback Noted", Toast.LENGTH_SHORT).show();
 
-                DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
-                documentReferenceInfo.update("incorrectGuesses", FieldValue.increment(1));
+                DocumentReference ref = fStore.collection("Users").document(uId);
+                ref.update("incorrectGuesses", FieldValue.increment(1));
 
                 popImage();
             }
@@ -241,7 +276,7 @@ public class ActivityStudio extends AppCompatActivity {
                 // Start recognizing the image
                 if (currentImage != null) {
                     FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
-                            .setAssetFilePath("AniRec_Model2.tflite")
+                            .setAssetFilePath(modelName)
                             .build();
 
                     FirebaseModelInterpreterOptions options = new FirebaseModelInterpreterOptions.Builder(model).build();
@@ -250,8 +285,7 @@ public class ActivityStudio extends AppCompatActivity {
                     try {
                         interpreter = FirebaseModelInterpreter.getInstance(options);
                     } catch (FirebaseMLException e) {
-                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
-                        showError();
+                        showError(Objects.requireNonNull(e.getMessage()));
                     }
 
                     FirebaseModelInputOutputOptions inputOutputOptions = null;
@@ -262,8 +296,7 @@ public class ActivityStudio extends AppCompatActivity {
                                 .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, output})
                                 .build();
                     } catch (FirebaseMLException e) {
-                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
-                        showError();
+                        showError(Objects.requireNonNull(e.getMessage()));
                     }
 
                     Bitmap bitmap = Bitmap.createScaledBitmap(currentImage, size, size, true);
@@ -286,8 +319,7 @@ public class ActivityStudio extends AppCompatActivity {
                                 .add(input)
                                 .build();
                     } catch (FirebaseMLException e) {
-                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
-                        showError();
+                        showError(Objects.requireNonNull(e.getMessage()));
                     }
 
                     // Actually interpret the image and show the result to the user
@@ -322,8 +354,7 @@ public class ActivityStudio extends AppCompatActivity {
                                     new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
-                                            showError();
+                                            showError(Objects.requireNonNull(e.getMessage()));
                                         }
                                     });
                 } else {
