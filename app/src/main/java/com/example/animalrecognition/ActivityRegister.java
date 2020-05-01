@@ -33,7 +33,7 @@ public class ActivityRegister extends AppCompatActivity
     private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
     private Button buttonRegister;
     private TextView textButtonLogin;
-    private String userName, email, userUid,  userId, password, professionDefault;
+    private String userName, email, userUid, uId, password, professionDefault;
 
     private void startHome() {
         Intent intHome = new Intent(ActivityRegister.this, ActivityHome.class);
@@ -71,7 +71,7 @@ public class ActivityRegister extends AppCompatActivity
                 // Converts the contents of the entries into "clean" strings with no leading or trailing spaces
                 userName = entryName.getText().toString().trim();
                 email = entryUserEmail.getText().toString().trim();
-                userId = entryUserId.getText().toString().trim();
+                uId = entryUserId.getText().toString().trim();
                 password = entryUserPassword.getText().toString().trim();
 
                 // Sanitize inputs to make sure they meet requirements before allowing registration
@@ -87,11 +87,11 @@ public class ActivityRegister extends AppCompatActivity
                     entryUserEmail.setError("Please enter your email");
                     entryUserEmail.requestFocus();
                 }
-                else if (userId.isEmpty()) {
+                else if (uId.isEmpty()) {
                     entryUserId.setError("Please enter your student ID");
                     entryUserId.requestFocus();
                 }
-                else if (userId.length() != 10) {
+                else if (uId.length() != 10) {
                     entryUserId.setError("Student ID must be 10 characters");
                     entryUserId.requestFocus();
                 }
@@ -108,7 +108,7 @@ public class ActivityRegister extends AppCompatActivity
                                 Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
 
                                 // Create and setup new user
-                                User user = new User(userName, email, userId, professionDefault);
+                                User user = new User(userName, email, uId, professionDefault);
 
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -119,7 +119,7 @@ public class ActivityRegister extends AppCompatActivity
                                 Map<String, Object> userMap = new HashMap<>();
                                 userMap.put("userName", userName);
                                 userMap.put("email", email);
-                                userMap.put("userId", userId);
+                                userMap.put("userId", uId);
                                 userMap.put("profession", professionDefault);
                                 documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

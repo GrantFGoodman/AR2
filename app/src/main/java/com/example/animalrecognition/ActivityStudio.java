@@ -37,16 +37,16 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 public class ActivityStudio extends AppCompatActivity {
 
-    private static FirebaseAuth auth;
-    private static FirebaseFirestore fStore;
+    private FirebaseFirestore fStore;
     private StorageReference refImageLists;
     private ImageView picture;
-    private Button buttonHome, buttonGo, buttonCamera, buttonUpload, buttonYes, buttonNo;
+    private Button buttonGo;
     private LinearLayout layoutOptions;
     private TextView headerAccuracy;
     private static int takeImageCode = 10001;
@@ -55,6 +55,7 @@ public class ActivityStudio extends AppCompatActivity {
 
     private Bitmap currentImage;
 
+    // Parameters for the network itself taken from the tensorflow tool
     private int size = 100;
     private int depth = 3;
     private int output = 64;
@@ -72,12 +73,19 @@ public class ActivityStudio extends AppCompatActivity {
                     "a squirrel"
             };
 
+    private void startHome() {
+        Intent intHome = new Intent(ActivityStudio.this, ActivityHome.class);
+        startActivity(intHome);
+
+        finish();
+    }
+
     // Uploads images to be stored in the firebase backend
     private void handleUpload(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        final StorageReference ref = refImageLists.child("image_"+bitmap.hashCode());
+        final StorageReference ref = refImageLists.child("image_" + bitmap.hashCode());
 
         ref.putBytes(byteArrayStream.toByteArray())
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -90,7 +98,7 @@ public class ActivityStudio extends AppCompatActivity {
 
     // Shows or hides (tied to display boolean) the little accuracy question below an image
     private void toggleImageOptions(boolean display, String animalName) {
-        if (display == true) {
+        if (display) {
             buttonGo.setVisibility(View.GONE);
 
             headerAccuracy.setText(String.format("Is this %s?", animalName));
@@ -104,11 +112,20 @@ public class ActivityStudio extends AppCompatActivity {
         }
     }
 
-    private void startHome() {
-        Intent intHome = new Intent(ActivityStudio.this, ActivityHome.class);
-        startActivity(intHome);
+    private void showError() {
+        Toast.makeText(ActivityStudio.this, "An error occurred", Toast.LENGTH_SHORT).show();
+    }
 
-        finish();
+    private void pushImage(Bitmap bitmap) {
+        handleUpload(bitmap);
+
+        picture.setImageBitmap(bitmap);
+        currentImage = bitmap;
+    }
+
+    private void popImage() {
+        picture.setImageResource(R.drawable.ic_gallery);
+        currentImage = null;
     }
 
     // Opens camera widget
@@ -128,39 +145,31 @@ public class ActivityStudio extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intGallery, "Select Picture"), uploadImageCode);
     }
 
-    // The following handles processing of all image submission (camera or gallery)
+    // Handles processing of image submission (camera or gallery)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == takeImageCode) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    Toast.makeText(ActivityStudio.this, "Uploading from camera", Toast.LENGTH_SHORT).show();
+        if (data != null && resultCode == RESULT_OK) {
+            if (requestCode == takeImageCode) {
+                Toast.makeText(ActivityStudio.this, "Uploading from camera", Toast.LENGTH_SHORT).show();
 
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                    handleUpload(bitmap);
+                Bitmap bitmap = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+                pushImage(bitmap);
+            } else if (requestCode == uploadImageCode) {
+                Toast.makeText(ActivityStudio.this, "Uploading from gallery", Toast.LENGTH_SHORT).show();
 
-                    picture.setImageBitmap(bitmap);
-                    currentImage = bitmap;
+                Uri selectedImage = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    pushImage(bitmap);
+                } catch (IOException e) {
+                    Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
+                    showError();
+                }
             }
-        } else if (requestCode == uploadImageCode) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    Toast.makeText(ActivityStudio.this, "Uploading from gallery", Toast.LENGTH_SHORT).show();
-
-                    Uri selectedImage = data.getData();
-
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-                        handleUpload(bitmap);
-
-                        picture.setImageBitmap(bitmap);
-                        currentImage = bitmap;
-                    } catch (IOException e) {
-                        Toast.makeText(ActivityStudio.this, "Upload failed", Toast.LENGTH_SHORT).show();
-                    }
-            }
+        } else {
+            showError();
         }
     }
 
@@ -169,17 +178,17 @@ public class ActivityStudio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_studio);
 
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        uId = auth.getCurrentUser().getUid();
+        uId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
         refImageLists = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
         picture = findViewById(R.id.picture);
-        buttonHome = findViewById(R.id.buttonHome);
+        Button buttonHome = findViewById(R.id.buttonHome);
         buttonGo = findViewById(R.id.buttonGo);
-        buttonCamera = findViewById(R.id.buttonCamera);
-        buttonUpload = findViewById(R.id.buttonUpload);
-        buttonYes = findViewById(R.id.buttonYes);
-        buttonNo = findViewById(R.id.buttonNo);
+        Button buttonCamera = findViewById(R.id.buttonCamera);
+        Button buttonUpload = findViewById(R.id.buttonUpload);
+        Button buttonYes = findViewById(R.id.buttonYes);
+        Button buttonNo = findViewById(R.id.buttonNo);
         layoutOptions = findViewById(R.id.layoutOptions);
         headerAccuracy = findViewById(R.id.headerAccuracy);
 
@@ -210,8 +219,7 @@ public class ActivityStudio extends AppCompatActivity {
                 DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
                 documentReferenceInfo.update("correctGuesses", FieldValue.increment(1));
 
-                picture.setImageResource(R.drawable.ic_gallery);
-                currentImage = null;
+                popImage();
             }
         });
         buttonNo.setOnClickListener(new View.OnClickListener() {
@@ -223,8 +231,7 @@ public class ActivityStudio extends AppCompatActivity {
                 DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
                 documentReferenceInfo.update("incorrectGuesses", FieldValue.increment(1));
 
-                picture.setImageResource(R.drawable.ic_gallery);
-                currentImage = null;
+                popImage();
             }
         });
 
@@ -240,25 +247,23 @@ public class ActivityStudio extends AppCompatActivity {
                     FirebaseModelInterpreterOptions options = new FirebaseModelInterpreterOptions.Builder(model).build();
                     FirebaseModelInterpreter interpreter = null;
 
-                    {
-                        try {
-                            interpreter = FirebaseModelInterpreter.getInstance(options);
-                        } catch (FirebaseMLException e) {
-                            Log.i("MLKit", e.getMessage());
-                        }
+                    try {
+                        interpreter = FirebaseModelInterpreter.getInstance(options);
+                    } catch (FirebaseMLException e) {
+                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
+                        showError();
                     }
 
                     FirebaseModelInputOutputOptions inputOutputOptions = null;
 
-                    {
-                        try {
-                            inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
-                                    .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, size, size, depth})
-                                    .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, output})
-                                    .build();
-                        } catch (FirebaseMLException e) {
-                            Log.i("MLKit", e.getMessage());
-                        }
+                    try {
+                        inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
+                                .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, size, size, depth})
+                                .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, output})
+                                .build();
+                    } catch (FirebaseMLException e) {
+                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
+                        showError();
                     }
 
                     Bitmap bitmap = Bitmap.createScaledBitmap(currentImage, size, size, true);
@@ -281,10 +286,14 @@ public class ActivityStudio extends AppCompatActivity {
                                 .add(input)
                                 .build();
                     } catch (FirebaseMLException e) {
-                        Log.i("MLKit", e.getMessage());
+                        Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
+                        showError();
                     }
 
                     // Actually interpret the image and show the result to the user
+                    assert inputOutputOptions != null;
+                    assert inputs != null;
+                    assert interpreter != null;
                     interpreter.run(inputs, inputOutputOptions)
                             .addOnSuccessListener(
                                     new OnSuccessListener<FirebaseModelOutputs>() {
@@ -313,7 +322,8 @@ public class ActivityStudio extends AppCompatActivity {
                                     new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.i("MLKit", e.getMessage());
+                                            Log.i("MLKit", Objects.requireNonNull(e.getMessage()));
+                                            showError();
                                         }
                                     });
                 } else {

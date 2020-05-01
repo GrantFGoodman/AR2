@@ -35,8 +35,19 @@
         android:layout_width="200dp"
         android:layout_height="180dp"
         android:src="@drawable/ic_gallery" />
-
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/counter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="54dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:text="20 images left"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
     <!--
         <GridView
