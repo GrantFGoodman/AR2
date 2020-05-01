@@ -1,7 +1,5 @@
 package com.example.animalrecognition;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +7,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ActivityHome extends AppCompatActivity
 {
     static FirebaseAuth auth;
     private Button buttonClassify, buttonProfile, buttonStats;
-    private TextView textButtonLogout;
+    private TextView textButtonLogout, textButtonAbout;
 
     private void startProfile() {
         Intent intProfile = new Intent(ActivityHome.this, ActivityProfile.class);
@@ -24,18 +24,16 @@ public class ActivityHome extends AppCompatActivity
         finish();
     }
 
-    /*
-    private void startGallery() {
-        Intent intGallery = new Intent(ActivityHome.this, ActivityGallery.class);
-        startActivity(intGallery);
-
-        finish();
-    }
-    */
-
     private void startClassify() {
         Intent intClassify = new Intent(ActivityHome.this, ActivityStudio.class);
         startActivity(intClassify);
+
+        finish();
+    }
+
+    private void startAbout() {
+        Intent intAbout = new Intent(ActivityHome.this, ActivityAbout.class);
+        startActivity(intAbout);
 
         finish();
     }
@@ -65,6 +63,7 @@ public class ActivityHome extends AppCompatActivity
         buttonProfile = findViewById(R.id.buttonProfile);
         buttonStats = findViewById(R.id.buttonStats);
         textButtonLogout = findViewById(R.id.buttonLogout);
+        textButtonAbout = findViewById(R.id.buttonAbout);
 
         textButtonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,20 +75,24 @@ public class ActivityHome extends AppCompatActivity
             }
         });
 
+        textButtonAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAbout();
+            }
+        });
         buttonClassify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startClassify();
             }
         });
-
         buttonProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startProfile();
             }
         });
-
         buttonStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

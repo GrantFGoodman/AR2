@@ -105,8 +105,6 @@ public class ActivityProfile extends AppCompatActivity {
                 entryUserProfession.setText(documentSnapshot.getString("profession"));
 
                 userIdHeader.setText(documentSnapshot.getString("userId"));
-
-                //profilePicture.setImageBitmap();
             }
         });
 
@@ -116,10 +114,7 @@ public class ActivityProfile extends AppCompatActivity {
         
         buttonApply.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {/*
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(entryUserName.getText().toString().trim()).build();
-                user.updateProfile(profileUpdates);*/
+            public void onClick(View v) {
 
                 userName = entryUserName.getText().toString().trim();
                 profession = entryUserProfession.getText().toString().trim();

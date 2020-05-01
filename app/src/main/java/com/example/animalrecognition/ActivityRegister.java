@@ -75,6 +75,8 @@ public class ActivityRegister extends AppCompatActivity
                 userId = entryUserId.getText().toString().trim();
                 password = entryUserPassword.getText().toString().trim();
 
+                // Sanitize inputs to make sure they meet requirements before allowing registration
+                // (Firebase checks these on the server end as well)
                 if (userName.isEmpty()) {
                     entryName.setError("Please enter your name");
                     entryName.requestFocus();
@@ -103,16 +105,14 @@ public class ActivityRegister extends AppCompatActivity
                         @Override
                         public void onComplete (@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+
                                 // Create and setup new user
                                 User user = new User(userName, email, userId, professionDefault);
 
-                                // This does not correctly set the DisplayName property to the name picked out during registration (stored under name)
                                 FirebaseDatabase.getInstance().getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .setValue(user);
-
-                                Toast.makeText(ActivityRegister.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                                startHome();
 
                                 userUid = auth.getCurrentUser().getUid();
                                 DocumentReference documentReference = fStore.collection("Users").document(userUid);
@@ -132,6 +132,8 @@ public class ActivityRegister extends AppCompatActivity
                                         Log.d(TAG, "Failure to create profile " + e.toString());
                                     }
                                 });
+
+                                startHome();
                             }
                             else {
                                 Toast.makeText(ActivityRegister.this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -148,9 +150,7 @@ public class ActivityRegister extends AppCompatActivity
                 startLogin();
             }
         });
-
     }
-
 }
 
 

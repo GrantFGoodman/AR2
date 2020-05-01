@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Animal Recognition Home</string>
+    <string name="app_name">AniRec Home</string>
     <string name="login_header">Login</string>
     <string name="register_header">Register Account</string>
     <string name="register_already_complete">Already made an account?</string>
@@ -41,6 +41,7 @@
     <string name="input_profession">Profession</string>
     <string name="button_profilePicture">Upload Profile Picture</string>
     <string name="button_logout">Logout</string>
+    <string name="button_about">About</string>
     <string name="button_goHome">Return Home</string>
     <string name="hint_profilePicture">Profile Picture</string>
     <string name="button_update">Apply Changes</string>
@@ -50,7 +51,10 @@
     <string name="header_gallery">My Pictures</string>
     <string name="button_go">Go</string>
     <string name="button_camera">Take Picture</string>
-    <string name="button_upload">Upload Picture(s)</string>
+    <string name="button_upload">Upload Picture</string>
     <string name="button_back">Go Back</string>
+
+    <string name="header_about">About AniRec</string>
+    <string name="about_text">AniRec (Animal Recognition) will allow users to upload pictures of animals that can be fed into the machine learning model for classification. These results, as well as the images themselves, will be stored in a database that can be accessed from the user’s account.  Statistics will be recorded and displayed to the system administrator, as well as to the users themselves.</string>
 
 </resources>
