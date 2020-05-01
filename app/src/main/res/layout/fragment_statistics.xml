@@ -8,6 +8,67 @@
     android:orientation="vertical"
     tools:context=".ActivityStats">
 
+    <TextView
+        android:id="@+id/header_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:textAlignment="center"
+        android:text="@string/header_stats"
+        android:textColor="#FFFFFF"
+        android:textSize="35sp"
+        android:gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/headerCorrect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/segoeui_semibold"
+            android:textAlignment="center"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/headerIncorrect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/segoeui_semibold"
+            android:textAlignment="center"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/headerAccuracy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/segoeui_semibold"
+        android:textAlignment="center"
+        android:text=""
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:gravity="center_horizontal" />
+
     <Button
         android:id="@+id/buttonHome"
         android:layout_width="wrap_content"

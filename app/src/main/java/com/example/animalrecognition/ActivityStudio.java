@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ml.common.FirebaseMLException;
 import com.google.firebase.ml.custom.FirebaseCustomLocalModel;
 import com.google.firebase.ml.custom.FirebaseModelDataType;
@@ -38,9 +43,12 @@ import javax.annotation.Nullable;
 public class ActivityStudio extends AppCompatActivity {
 
     private static FirebaseAuth auth;
+    private static FirebaseFirestore fStore;
     private StorageReference refImageLists;
     private ImageView picture;
-    private Button buttonHome, buttonGo, buttonCamera, buttonUpload;
+    private Button buttonHome, buttonGo, buttonCamera, buttonUpload, buttonYes, buttonNo;
+    private LinearLayout layoutOptions;
+    private TextView headerAccuracy;
     private static int takeImageCode = 10001;
     private static int uploadImageCode = 10002;
     private String uId;
@@ -78,6 +86,22 @@ public class ActivityStudio extends AppCompatActivity {
                         //getDownloadURL(reference);
                     }
                 });
+    }
+
+    // Shows or hides (tied to display boolean) the little accuracy question below an image
+    private void toggleImageOptions(boolean display, String animalName) {
+        if (display == true) {
+            buttonGo.setVisibility(View.GONE);
+
+            headerAccuracy.setText(String.format("Is this %s?", animalName));
+            headerAccuracy.setVisibility(View.VISIBLE);
+            layoutOptions.setVisibility(View.VISIBLE);
+        } else {
+            buttonGo.setVisibility(View.VISIBLE);
+
+            headerAccuracy.setVisibility(View.GONE);
+            layoutOptions.setVisibility(View.GONE);
+        }
     }
 
     private void startHome() {
@@ -145,14 +169,19 @@ public class ActivityStudio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_studio);
 
-        uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        refImageLists = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
         auth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        uId = auth.getCurrentUser().getUid();
+        refImageLists = FirebaseStorage.getInstance().getReference().child("ImageLists").child(uId);
+        picture = findViewById(R.id.picture);
         buttonHome = findViewById(R.id.buttonHome);
         buttonGo = findViewById(R.id.buttonGo);
         buttonCamera = findViewById(R.id.buttonCamera);
         buttonUpload = findViewById(R.id.buttonUpload);
-        picture = findViewById(R.id.picture);
+        buttonYes = findViewById(R.id.buttonYes);
+        buttonNo = findViewById(R.id.buttonNo);
+        layoutOptions = findViewById(R.id.layoutOptions);
+        headerAccuracy = findViewById(R.id.headerAccuracy);
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,14 +201,40 @@ public class ActivityStudio extends AppCompatActivity {
                 getPictureFromGallery();
             }
         });
+        buttonYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleImageOptions(false, "");
+                Toast.makeText(ActivityStudio.this, "Hooray!", Toast.LENGTH_SHORT).show();
+
+                DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
+                documentReferenceInfo.update("correctGuesses", FieldValue.increment(1));
+
+                picture.setImageResource(R.drawable.ic_gallery);
+                currentImage = null;
+            }
+        });
+        buttonNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleImageOptions(false, "");
+                Toast.makeText(ActivityStudio.this, "Feedback Noted", Toast.LENGTH_SHORT).show();
+
+                DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
+                documentReferenceInfo.update("incorrectGuesses", FieldValue.increment(1));
+
+                picture.setImageResource(R.drawable.ic_gallery);
+                currentImage = null;
+            }
+        });
+
         buttonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // Start recognizing the image
                 if (currentImage != null) {
                     FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
-                            .setAssetFilePath("recognitionModel.tflite")
+                            .setAssetFilePath("AniRec_Model2.tflite")
                             .build();
 
                     FirebaseModelInterpreterOptions options = new FirebaseModelInterpreterOptions.Builder(model).build();
@@ -251,7 +306,7 @@ public class ActivityStudio extends AppCompatActivity {
                                                 }
                                             }
 
-                                            Toast.makeText(ActivityStudio.this, "Image contains " + likeliest, Toast.LENGTH_LONG).show();
+                                            toggleImageOptions(true, likeliest);
                                         }
                                     })
                             .addOnFailureListener(
@@ -262,7 +317,7 @@ public class ActivityStudio extends AppCompatActivity {
                                         }
                                     });
                 } else {
-                    Toast.makeText(ActivityStudio.this, "Please upload or capture photo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityStudio.this, "Please upload or capture photo first", Toast.LENGTH_SHORT).show();
                 }
             }
         });
