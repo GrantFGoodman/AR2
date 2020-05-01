@@ -108,7 +108,7 @@ public class ActivityProfile extends AppCompatActivity {
             }
         });
 
-        if(user.getPhotoUrl() != null){
+        if (user.getPhotoUrl() != null) {
             Glide.with(this).load(user.getPhotoUrl()).into(profilePicture);
         }
         

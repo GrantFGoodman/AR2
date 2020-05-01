@@ -55,6 +55,6 @@
     <string name="button_back">Go Back</string>
 
     <string name="header_about">About AniRec</string>
-    <string name="about_text">AniRec (Animal Recognition) will allow users to upload pictures of animals that can be fed into the machine learning model for classification. These results, as well as the images themselves, will be stored in a database that can be accessed from the user’s account.  Statistics will be recorded and displayed to the system administrator, as well as to the users themselves.</string>
+    <string name="about_text">AniRec (Animal Recognition) will allow users to upload pictures of animals that can be fed into the machine learning model for classification. These results, as well as the images themselves, will be stored in a database that can be accessed from the user’s account or by the system administrator. Statistics relating to the network\'s performance will be recorded and displayed to the users as well.</string>
 
 </resources>
