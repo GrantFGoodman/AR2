@@ -21,12 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.core.Context;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,8 +36,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -130,17 +126,28 @@ public class ActivityProfile extends AppCompatActivity {
 
                 DocumentReference documentReferenceUpdate = fStore.collection("Users").document(userUid);
 
-                documentReferenceUpdate.update("name", userName, "profession", profession)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(ActivityProfile.this, "Profile Update Successful", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(ActivityProfile.this, "Profile Update Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                if (userName.isEmpty()) {
+                    entryUserName.setError("Please enter your name");
+                    entryUserName.requestFocus();
+                } else if (userName.length() < 2) {
+                    entryUserName.setError("Name must be at least 2 characters");
+                    entryUserName.requestFocus();
+                } else if (profession.isEmpty()) {
+                    entryUserProfession.setError("Please enter your profession");
+                    entryUserProfession.requestFocus();
+                } else {
+                    documentReferenceUpdate.update("name", userName, "profession", profession)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(ActivityProfile.this, "Profile Update Successful", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(ActivityProfile.this, "Profile Update Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         });
 

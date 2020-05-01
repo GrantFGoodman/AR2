@@ -47,7 +47,7 @@
     <string name="button_resetPassword">Reset Password</string>
     <string name="header_changeProfilePicture">Tap to change profile picture</string>
 
-    <string name="header_gallery">My Pictures:</string>
+    <string name="header_gallery">My Pictures</string>
     <string name="button_go">Go</string>
     <string name="button_camera">Take Picture</string>
     <string name="button_upload">Upload Picture(s)</string>

@@ -19,6 +19,25 @@
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="200dp"
+        android:layout_height="180dp"
+        android:src="@drawable/ic_gallery" />
+
+    </LinearLayout>
+
+    <!--
         <GridView
             android:id="@+id/gridView"
             android:layout_width="match_parent"
@@ -30,6 +49,7 @@
             android:verticalSpacing="10dp"
             android:gravity="center"
             android:stretchMode="columnWidth" />
+            -->
 
     <Button
         android:id="@+id/buttonGo"

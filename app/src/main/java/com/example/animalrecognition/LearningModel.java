@@ -1,3 +1,4 @@
+/*
 package com.example.animalrecognition;
 
 import android.graphics.Bitmap;
@@ -17,16 +18,28 @@ import com.google.firebase.ml.custom.FirebaseModelInterpreter;
 import com.google.firebase.ml.custom.FirebaseModelInterpreterOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 // Borrows code implementation from https://firebase.google.com/docs/ml-kit/android/use-custom-models
 
 public final class LearningModel {
 
-    public static String Interpret(Bitmap bitmap, final InputStream labels) {
+    static int size = 100;
+    static int depth = 3;
+    static int output = 64;
+    static String[] labels =
+            {
+                    "Sheep",
+                    "Dog",
+                    "Elephant",
+                    "Cat",
+                    "Spider",
+                    "Squirrel",
+                    "Chicken",
+                    "Butterfly",
+                    "Cow",
+                    "Horse"
+            };
+
+    public final static String Interpret(Bitmap bitmap) {
 
         FirebaseCustomLocalModel model = new FirebaseCustomLocalModel.Builder()
                 .setAssetFilePath("recognitionModel.tflite")
@@ -48,20 +61,20 @@ public final class LearningModel {
         {
             try {
                 inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
-                        .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 100, 100, 3})
-                        .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, 64})
+                        .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, size, size, depth})
+                        .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, output})
                         .build();
             } catch (FirebaseMLException e) {
                 Log.i("MLKit", e.getMessage());
             }
         }
 
-        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+        bitmap = Bitmap.createScaledBitmap(bitmap, size, size, true);
 
         int batchNum = 0;
-        float[][][][] input = new float[1][100][100][3];
-        for (int x = 0; x < 100; x++) {
-            for (int y = 0; y < 100; y++) {
+        float[][][][] input = new float[1][size][size][depth];
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 int pixel = bitmap.getPixel(x, y);
                 // Normalize channel values to [-1.0, 1.0]. This requirement varies by
                 // model. For example, some models might require values to be normalized
@@ -74,7 +87,6 @@ public final class LearningModel {
 
         FirebaseModelInputs inputs = null;
         try {
-            Log.i("MLKit", input.toString());
             inputs = new FirebaseModelInputs.Builder()
                     .add(input)  // add() as many input arrays as your model requires
                     .build();
@@ -90,26 +102,18 @@ public final class LearningModel {
                                 float[][] output = result.getOutput(0);
                                 float[] probabilities = output[0];
 
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(labels));
-
-                                float highestProb = 0;
+                                float highestProbability = 0;
                                 String likeliest = "";
 
                                 for (int i = 0; i < probabilities.length; i++) {
-                                    String label = null;
-                                    try {
-                                        label = reader.readLine();
-                                    } catch (IOException e) {
-                                        Log.i("MLKit", e.getMessage());
-                                    }
-                                    Log.i("MLKit", String.format("%s: %1.4f", label, probabilities[i]));
+                                    Log.i("MLKit", String.format("%s: %1.4f", labels[i % labels.length], probabilities[i]));
 
-                                    if (probabilities[i] > highestProb) {
-                                        highestProb = probabilities[i];
-                                        likeliest = label;
+                                    if (probabilities[i] > highestProbability) {
+                                        likeliest = labels[i % labels.length];
+                                        highestProbability = probabilities[i];
                                     }
                                 }
-                                Log.i("MLKit", likeliest);
+
                             }
                         })
                 .addOnFailureListener(
@@ -120,6 +124,7 @@ public final class LearningModel {
                             }
                         });
 
-        return "Nothing";
+        return "no";
     }
 }
+*/

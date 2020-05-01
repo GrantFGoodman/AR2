@@ -1,17 +1,15 @@
 package com.example.animalrecognition;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
+import android.os.Bundle;
 import android.util.Log;
-import android.widget.*;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,14 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,16 +75,23 @@ public class ActivityRegister extends AppCompatActivity
                 password = entryUserPassword.getText().toString().trim();
 
                 if (userName.isEmpty()) {
-                    entryName.setError("Please enter your username");
+                    entryName.setError("Please enter your name");
                     entryName.requestFocus();
+                } else if (userName.length() < 2) {
+                    entryName.setError("Name must be at least 2 characters");
+                    entryName.requestFocus();
+                }
+                else if (email.isEmpty()) {
+                    entryUserEmail.setError("Please enter your email");
+                    entryUserEmail.requestFocus();
                 }
                 else if (userId.isEmpty()) {
                     entryUserId.setError("Please enter your student ID");
                     entryUserId.requestFocus();
                 }
-                else if (email.isEmpty()) {
-                    entryUserEmail.setError("Please enter your email");
-                    entryUserEmail.requestFocus();
+                else if (userId.length() != 10) {
+                    entryUserId.setError("Student ID must be 10 characters");
+                    entryUserId.requestFocus();
                 }
                 else if (password.isEmpty()) {
                     entryUserPassword.setError("Please enter your password");
