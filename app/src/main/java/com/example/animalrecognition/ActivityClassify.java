@@ -13,9 +13,6 @@ public class ActivityClassify extends AppCompatActivity {
 
     // Unused, but unsafe to delete
 
-    static FirebaseAuth auth;
-    private Button buttonHome;
-
     private void startStudio() {
         Intent intStudio = new Intent(ActivityClassify.this, ActivityStudio.class);
         startActivity(intStudio);
@@ -28,8 +25,8 @@ public class ActivityClassify extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_statistics);
 
-        auth = FirebaseAuth.getInstance();
-        buttonHome = findViewById(R.id.buttonHome);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        Button buttonHome = findViewById(R.id.buttonHome);
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -24,8 +24,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.core.Context;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -36,23 +34,20 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 public class ActivityProfile extends AppCompatActivity {
 
-    static FirebaseAuth auth;
-    static FirebaseUser user;
-    static FirebaseFirestore fStore;
+    private FirebaseUser user;
+    private FirebaseFirestore fStore;
     public static final String TAG = "TAG";
-    static DatabaseReference databaseReference;
-    private Button buttonHome, buttonApply, buttonResetPassword;
     private ImageView profilePicture;
-    private TextView emailHeader, userIdHeader;
+    private TextView userIdHeader;
     private EditText entryUserName, entryUserProfession;
     private String userUid, userName, profession;
-    private Context profileContext;
-    int takeImageCode = 10001;
+    private int takeImageCode = 10001;
 
     private void startHome() {
         Intent intHome = new Intent(ActivityProfile.this, ActivityHome.class);
@@ -63,14 +58,15 @@ public class ActivityProfile extends AppCompatActivity {
 
     private void sendPasswordResetEmail() {
         final String email = user.getEmail();
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+        assert email != null;
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(ActivityProfile.this, "Password reset instructions sent to " + email, Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(ActivityProfile.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityProfile.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -81,27 +77,28 @@ public class ActivityProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_profile);
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getInstance().getCurrentUser();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
 
-        buttonHome = findViewById(R.id.buttonHome);
-        buttonApply = findViewById(R.id.buttonApply);
+        Button buttonHome = findViewById(R.id.buttonHome);
+        Button buttonApply = findViewById(R.id.buttonApply);
         profilePicture = findViewById(R.id.profilePicture);
-        buttonResetPassword = findViewById(R.id.buttonResetPassword);
-        emailHeader = findViewById(R.id.emailHeader);
+        Button buttonResetPassword = findViewById(R.id.buttonResetPassword);
+        TextView emailHeader = findViewById(R.id.emailHeader);
         userIdHeader = findViewById(R.id.userIdHeader);
         entryUserName = findViewById(R.id.entryUserName);
         entryUserProfession = findViewById(R.id.entryUserProfession);
 
         emailHeader.setText(user.getEmail());
-        userUid = auth.getCurrentUser().getUid();
+        userUid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         // Propagate the edit name and profession fields with the stuff saved in the database
         DocumentReference documentReferenceInfo = fStore.collection("Users").document(userUid);
         documentReferenceInfo.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                assert documentSnapshot != null;
                 entryUserName.setText(documentSnapshot.getString("name"));
                 entryUserProfession.setText(documentSnapshot.getString("profession"));
 
@@ -143,7 +140,7 @@ public class ActivityProfile extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(ActivityProfile.this, "Profile Update Successful", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(ActivityProfile.this, "Profile Update Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ActivityProfile.this, "Profile Update Error: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -178,13 +175,12 @@ public class ActivityProfile extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == takeImageCode) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                    profilePicture.setImageBitmap(bitmap);
-                    handleUpload(bitmap);
-            }
+        if (data != null && requestCode == takeImageCode && resultCode == RESULT_OK) {
+            Bitmap bitmap = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+            profilePicture.setImageBitmap(bitmap);
+
+            assert bitmap != null;
+            handleUpload(bitmap);
         }
     }
 
@@ -192,7 +188,7 @@ public class ActivityProfile extends AppCompatActivity {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        String uID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         final  StorageReference reference = FirebaseStorage.getInstance().getReference()
                 .child("ProfileImages")
                 .child(uID + ".jpeg");
@@ -225,6 +221,7 @@ public class ActivityProfile extends AppCompatActivity {
 
     private void setUserProfileURL(Uri uri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
 
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
                 .setPhotoUri(uri)

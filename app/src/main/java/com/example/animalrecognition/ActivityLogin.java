@@ -17,13 +17,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class ActivityLogin extends AppCompatActivity {
 
-    static FirebaseAuth auth;
+    private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private EditText entryEmail, entryPassword;
-    private Button buttonLogin;
-    private TextView textButtonRegister, textButtonForgotPassword;
     private String email, password;
 
     private void startHome() {
@@ -43,7 +43,7 @@ public class ActivityLogin extends AppCompatActivity {
     private void sendPasswordResetEmail() {
         final String resetEmail = entryEmail.getText().toString().trim();
 
-        if (resetEmail == null || resetEmail.isEmpty()) {
+        if (resetEmail.isEmpty()) {
             Toast.makeText(ActivityLogin.this, "Supply valid email to send password reset instructions.", Toast.LENGTH_SHORT).show();
         } else {
             FirebaseAuth.getInstance().sendPasswordResetEmail(resetEmail)
@@ -53,7 +53,7 @@ public class ActivityLogin extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(ActivityLogin.this, "Password reset instructions sent to " + resetEmail, Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(ActivityLogin.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityLogin.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -68,9 +68,9 @@ public class ActivityLogin extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         entryEmail = findViewById(R.id.entryUserEmail);
         entryPassword = findViewById(R.id.entryUserPassword);
-        textButtonRegister = findViewById(R.id.buttonRegister);
-        buttonLogin = findViewById(R.id.buttonLogin);
-        textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
+        TextView textButtonRegister = findViewById(R.id.buttonRegister);
+        Button buttonLogin = findViewById(R.id.buttonLogin);
+        TextView textButtonForgotPassword = findViewById(R.id.buttonForgotPassword);
 
         // Automatically skip to the home screen if we already have a login cookie
         authListener = new FirebaseAuth.AuthStateListener() {
@@ -109,7 +109,7 @@ public class ActivityLogin extends AppCompatActivity {
                                 startHome();
                             }
                             else {
-                                Toast.makeText(ActivityLogin.this, "Login Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityLogin.this, "Login Failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

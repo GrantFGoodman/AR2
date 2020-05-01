@@ -13,9 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ActivityHome extends AppCompatActivity
 {
-    static FirebaseAuth auth;
-    private Button buttonClassify, buttonProfile, buttonStats;
-    private TextView textButtonLogout, textButtonAbout;
+    private FirebaseAuth auth;
 
     private void startProfile() {
         Intent intProfile = new Intent(ActivityHome.this, ActivityProfile.class);
@@ -59,11 +57,11 @@ public class ActivityHome extends AppCompatActivity
         setContentView(R.layout.fragment_home);
 
         auth = FirebaseAuth.getInstance();
-        buttonClassify = findViewById(R.id.buttonClassify);
-        buttonProfile = findViewById(R.id.buttonProfile);
-        buttonStats = findViewById(R.id.buttonStats);
-        textButtonLogout = findViewById(R.id.buttonLogout);
-        textButtonAbout = findViewById(R.id.buttonAbout);
+        Button buttonClassify = findViewById(R.id.buttonClassify);
+        Button buttonProfile = findViewById(R.id.buttonProfile);
+        Button buttonStats = findViewById(R.id.buttonStats);
+        TextView textButtonLogout = findViewById(R.id.buttonLogout);
+        TextView textButtonAbout = findViewById(R.id.buttonAbout);
 
         textButtonLogout.setOnClickListener(new View.OnClickListener() {
             @Override

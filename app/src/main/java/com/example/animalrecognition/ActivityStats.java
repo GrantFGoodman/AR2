@@ -1,5 +1,6 @@
 package com.example.animalrecognition;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,13 +17,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.util.Objects;
+
 public class ActivityStats extends AppCompatActivity {
 
-    static FirebaseAuth auth;
-    static FirebaseFirestore fStore;
-    private Button buttonHome;
     private TextView headerCorrect, headerIncorrect, headerAccuracy;
-    private String uId;
 
     private void startHome() {
         Intent intHome = new Intent(ActivityStats.this, ActivityHome.class);
@@ -36,10 +35,10 @@ public class ActivityStats extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_statistics);
 
-        auth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
-        uId = auth.getCurrentUser().getUid();
-        buttonHome = findViewById(R.id.buttonHome);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        String uId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        Button buttonHome = findViewById(R.id.buttonHome);
         headerCorrect = findViewById(R.id.headerCorrect);
         headerIncorrect = findViewById(R.id.headerIncorrect);
         headerAccuracy = findViewById(R.id.headerAccuracy);
@@ -47,6 +46,7 @@ public class ActivityStats extends AppCompatActivity {
         // Propagate the edit name and profession fields with the stuff saved in the database
         DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
         documentReferenceInfo.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @SuppressLint({"DefaultLocale", "SetTextI18n"})
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
 
