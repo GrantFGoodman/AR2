@@ -22,8 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class ActivityRegister extends AppCompatActivity
 {
@@ -31,8 +30,6 @@ public class ActivityRegister extends AppCompatActivity
     private FirebaseAuth auth;
     private FirebaseFirestore fStore;
     private EditText entryName, entryUserId, entryUserEmail, entryUserPassword;
-    private Button buttonRegister;
-    private TextView textButtonLogin;
     private String userName, email, userUid, uId, password, professionDefault;
 
     private void startHome() {
@@ -60,8 +57,8 @@ public class ActivityRegister extends AppCompatActivity
         entryUserId = findViewById(R.id.entryUserId);
         entryUserEmail = findViewById(R.id.entryUserEmail);
         entryUserPassword = findViewById(R.id.entryUserPassword);
-        buttonRegister = findViewById(R.id.buttonRegister);
-        textButtonLogin = findViewById(R.id.buttonLogin);
+        Button buttonRegister = findViewById(R.id.buttonRegister);
+        TextView textButtonLogin = findViewById(R.id.buttonLogin);
         professionDefault = "Animal Photographer";
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
@@ -111,16 +108,18 @@ public class ActivityRegister extends AppCompatActivity
                                 User user = new User(userName, email, uId, professionDefault);
 
                                 FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                                         .setValue(user);
 
-                                userUid = auth.getCurrentUser().getUid();
+                                userUid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
                                 DocumentReference documentReference = fStore.collection("Users").document(userUid);
+                                /*
                                 Map<String, Object> userMap = new HashMap<>();
                                 userMap.put("userName", userName);
                                 userMap.put("email", email);
                                 userMap.put("userId", uId);
                                 userMap.put("profession", professionDefault);
+                                 */
                                 documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -132,11 +131,10 @@ public class ActivityRegister extends AppCompatActivity
                                         Log.d(TAG, "Failure to create profile " + e.toString());
                                     }
                                 });
-
                                 startHome();
                             }
                             else {
-                                Toast.makeText(ActivityRegister.this, "Registration Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityRegister.this, "Registration Failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

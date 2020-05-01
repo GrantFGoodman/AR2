@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ActivityClassify extends AppCompatActivity {
 
+    // Unused, but unsafe to delete
+
     static FirebaseAuth auth;
     private Button buttonHome;
 
