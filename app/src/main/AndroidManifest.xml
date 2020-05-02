@@ -37,7 +37,7 @@
         <activity android:name=".ActivityProfile" />
         <activity android:name=".ActivityStats" />
         <activity android:name=".ActivityStudio" />
-        <activity android:name=".ActivityClassify" />
+        <activity android:name=".ActivityStats2" />
         <activity android:name=".ActivityAbout" />
         <activity android:name=".ActivityGallery">
             <intent-filter>

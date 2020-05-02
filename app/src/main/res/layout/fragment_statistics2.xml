@@ -6,7 +6,22 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_generic"
     android:orientation="vertical"
-    tools:context=".ActivityClassify">
+    tools:context=".ActivityStats2">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:id="@+id/graph1"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:src="@drawable/graph1" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonBack"

@@ -30,6 +30,14 @@ public class ActivityStats extends AppCompatActivity {
         finish();
     }
 
+    private void startSecondPage() {
+        Intent intStats = new Intent(ActivityStats.this, ActivityStats2.class);
+        startActivity(intStats);
+
+        finish();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +47,7 @@ public class ActivityStats extends AppCompatActivity {
         FirebaseFirestore fStore = FirebaseFirestore.getInstance();
         String uId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
         Button buttonHome = findViewById(R.id.buttonHome);
+        Button buttonPage = findViewById(R.id.buttonPage);
         headerCorrect = findViewById(R.id.headerCorrect);
         headerIncorrect = findViewById(R.id.headerIncorrect);
         headerAccuracy = findViewById(R.id.headerAccuracy);
@@ -69,6 +78,12 @@ public class ActivityStats extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startHome();
+            }
+        });
+        buttonPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSecondPage();
             }
         });
     }

@@ -1,8 +1,8 @@
 package com.example.animalrecognition;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,15 +18,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.ml.common.FirebaseMLException;
 import com.google.firebase.ml.custom.FirebaseCustomLocalModel;
 import com.google.firebase.ml.custom.FirebaseModelDataType;
@@ -35,11 +35,12 @@ import com.google.firebase.ml.custom.FirebaseModelInputs;
 import com.google.firebase.ml.custom.FirebaseModelInterpreter;
 import com.google.firebase.ml.custom.FirebaseModelInterpreterOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -64,7 +65,7 @@ public class ActivityStudio extends AppCompatActivity {
     // Parameters for the network itself taken from the tensorflow tool
     private final int size = 100;
     private final int depth = 3;
-    private final int output = 64;
+    private final int output = 10;
     private final String modelName = "AniRec_Model2.tflite";
     private final String[] labels =
             {
@@ -92,13 +93,11 @@ public class ActivityStudio extends AppCompatActivity {
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayStream);
 
-        final StorageReference ref = refImageLists.child("image_" + localCounter);
-
-        ref.putBytes(byteArrayStream.toByteArray())
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        refImageLists.child("image_" + localCounter).putBytes(byteArrayStream.toByteArray())
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        //getDownloadURL(reference);
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(ActivityStudio.this, "Image upload failure", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -121,31 +120,67 @@ public class ActivityStudio extends AppCompatActivity {
 
     private void showError(String err) {
         Log.i("MLKit", err);
-        Toast.makeText(ActivityStudio.this, err, Toast.LENGTH_SHORT).show();
+        Toast.makeText(ActivityStudio.this, err, Toast.LENGTH_LONG).show();
     }
 
+    // Adds a new image to the database and displays it locally
     private void pushImage(Bitmap bitmap) {
-        handleUpload(bitmap);
+        localCounter++;
 
+        handleUpload(bitmap);
         picture.setImageBitmap(bitmap);
         currentImage = bitmap;
 
         DocumentReference ref = fStore.collection("Users").document(uId);
         ref.update("counter", FieldValue.increment(1));
 
-        localCounter++;
-        headerCounter.setText(localCounter + " Image(s) Left");
+        updateCounterHeader();
     }
 
+    // Pushes the image counter back and displays the previous image
+    // No need to remove popped images from the database since they'll be rewritten later
     private void popImage() {
-        picture.setImageResource(R.drawable.ic_gallery);
-        currentImage = null;
+        localCounter--;
+
+        downloadAndSetLeadingImage();
 
         DocumentReference ref = fStore.collection("Users").document(uId);
         ref.update("counter", FieldValue.increment(-1));
+        updateCounterHeader();
+    }
 
-        localCounter--;
-        headerCounter.setText(localCounter + " Image(s) Left");
+    // Displays the latest image (based on localCounter) and preps the machine learning algorithm to accept it
+    private void downloadAndSetLeadingImage() {
+        picture.setImageResource(R.drawable.ic_gallery);
+        currentImage = null;
+
+        // Download the latest image
+        if (localCounter > 0) {
+            try {
+                final File localFile = File.createTempFile("Image", "bmp");
+                localFile.deleteOnExit();
+                refImageLists.child("image_" + localCounter).getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+
+                        picture.setImageBitmap(bitmap);
+                        currentImage = bitmap;
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ActivityStudio.this, "Image download failure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (IOException e) {
+                showError(Objects.requireNonNull(e.getMessage()));
+            }
+        }
+    }
+
+    private void updateCounterHeader() {
+        headerCounter.setText(String.format("%s Image%s Left", localCounter, localCounter == 1 ? "" : "s"));
     }
 
     // Opens camera widget
@@ -215,15 +250,19 @@ public class ActivityStudio extends AppCompatActivity {
 
         // Propagate the counter field with the stuff saved in the database
         DocumentReference documentReferenceInfo = fStore.collection("Users").document(uId);
-        documentReferenceInfo.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @SuppressLint({"DefaultLocale", "SetTextI18n"})
+        Task<DocumentSnapshot> snapshot = documentReferenceInfo.get();
+        snapshot.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@com.google.firebase.database.annotations.Nullable DocumentSnapshot documentSnapshot, @com.google.firebase.database.annotations.Nullable FirebaseFirestoreException e) {
-                // Get the counter in a readable format (or 0 if it's null on the server)
-                Double counterRaw = documentSnapshot.getDouble("counter");
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    // Get the counter in a readable format (or 0 if it's null on the server)
+                    Double counterRaw = Objects.requireNonNull(task.getResult()).getDouble("counter");
 
-                localCounter = (counterRaw != null) ? counterRaw.intValue() : 0;
-                headerCounter.setText(localCounter + " Image(s) Left");
+                    localCounter = (counterRaw != null) ? counterRaw.intValue() : 0;
+                    updateCounterHeader();
+
+                    downloadAndSetLeadingImage();
+                }
             }
         });
 

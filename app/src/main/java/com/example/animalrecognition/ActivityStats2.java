@@ -9,13 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ActivityClassify extends AppCompatActivity {
+public class ActivityStats2 extends AppCompatActivity {
 
-    // Unused, but unsafe to delete
-
-    private void startStudio() {
-        Intent intStudio = new Intent(ActivityClassify.this, ActivityStudio.class);
-        startActivity(intStudio);
+    private void startStats() {
+        Intent intStats = new Intent(ActivityStats2.this, ActivityStats.class);
+        startActivity(intStats);
 
         finish();
     }
@@ -23,15 +21,15 @@ public class ActivityClassify extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_statistics);
+        setContentView(R.layout.fragment_statistics2);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        Button buttonHome = findViewById(R.id.buttonHome);
+        Button buttonBack = findViewById(R.id.buttonBack);
 
-        buttonHome.setOnClickListener(new View.OnClickListener() {
+        buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startStudio();
+                startStats();
             }
         });
     }
