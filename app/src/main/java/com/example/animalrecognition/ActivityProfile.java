@@ -83,11 +83,11 @@ public class ActivityProfile extends AppCompatActivity {
 
         Button buttonHome = findViewById(R.id.buttonHome);
         Button buttonApply = findViewById(R.id.buttonApply);
-        profilePicture = findViewById(R.id.profilePicture);
         Button buttonResetPassword = findViewById(R.id.buttonResetPassword);
         TextView emailHeader = findViewById(R.id.emailHeader);
         userIdHeader = findViewById(R.id.userIdHeader);
         entryUserName = findViewById(R.id.entryUserName);
+        profilePicture = findViewById(R.id.profilePicture);
         entryUserProfession = findViewById(R.id.entryUserProfession);
 
         emailHeader.setText(user.getEmail());
@@ -164,7 +164,6 @@ public class ActivityProfile extends AppCompatActivity {
     }
 
     // The following functions handle profile picture uploading
-
     public void handleImageClick(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
