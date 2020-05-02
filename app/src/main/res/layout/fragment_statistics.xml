@@ -37,7 +37,7 @@
             android:layout_marginHorizontal="5dp"
             android:fontFamily="@font/segoeui_semibold"
             android:textAlignment="center"
-            android:text=""
+            android:text="Correct Guesses: 0"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:gravity="center_horizontal" />
@@ -49,7 +49,7 @@
             android:layout_marginHorizontal="5dp"
             android:fontFamily="@font/segoeui_semibold"
             android:textAlignment="center"
-            android:text=""
+            android:text="Incorrect Guesses: 0"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:gravity="center_horizontal" />
