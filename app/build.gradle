@@ -55,7 +55,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.3'
-
-
-
 }

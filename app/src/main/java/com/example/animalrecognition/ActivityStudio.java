@@ -64,7 +64,6 @@ public class ActivityStudio extends AppCompatActivity {
 
     // Parameters for the network itself taken from the tensorflow tool
     private final int size = 100;
-    private final int depth = 3;
     private final int output = 10;
     private final String modelName = "AniRec_Model2.tflite";
     private final String[] labels =
@@ -331,7 +330,7 @@ public class ActivityStudio extends AppCompatActivity {
 
                     try {
                         inputOutputOptions = new FirebaseModelInputOutputOptions.Builder()
-                                .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, size, size, depth})
+                                .setInputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, size, size, 3})
                                 .setOutputFormat(0, FirebaseModelDataType.FLOAT32, new int[]{1, output})
                                 .build();
                     } catch (FirebaseMLException e) {
@@ -342,7 +341,7 @@ public class ActivityStudio extends AppCompatActivity {
 
                     // Normalize channel values to [-1.0, 1.0]
                     int batchNum = 0;
-                    float[][][][] input = new float[1][size][size][depth];
+                    float[][][][] input = new float[1][size][size][3];
                     for (int x = 0; x < size; x++) {
                         for (int y = 0; y < size; y++) {
                             int pixel = bitmap.getPixel(x, y);
@@ -399,6 +398,7 @@ public class ActivityStudio extends AppCompatActivity {
                 } else {
                     Toast.makeText(ActivityStudio.this, "Please upload or capture photo first", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }
